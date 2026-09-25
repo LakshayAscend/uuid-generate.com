@@ -1,11 +1,628 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+// Read version from query param default v4
+const url = Astro.url;
+const vParam = url.searchParams.get("v");
+const validVersions = ["1", "3", "4", "5", "7"];
+const defaultVersion = validVersions.includes(vParam ?? "") ? (vParam as string) : "4";
 ---
 
-<Layout>
-	<Welcome />
+<Layout
+  title="UUID Generator"
+  description="Generate UUID v1, v3, v4, v5, and v7 instantly online. Free, fast, and developer-friendly. Validate, decode, and export in multiple formats."
+  canonical="https://uuid-generator.com"
+>
+  <!-- Hero Band -->
+  <section class="hero-mesh" style="padding:var(--spacing-4xl) 0 var(--spacing-3xl);">
+    <div class="container" style="text-align:center;">
+      <div class="mono-eyebrow" style="color:var(--color-mute);margin-bottom:var(--spacing-md);">RFC 4122 Compliant · Free · No Ads</div>
+      <h1 class="display-xl" style="color:var(--color-ink);margin:0 0 var(--spacing-md);max-width:640px;margin-left:auto;margin-right:auto;">
+        UUID Generator
+      </h1>
+      <p class="body-lg" style="color:var(--color-body);max-width:480px;margin:0 auto var(--spacing-xl);">
+        Generate universally unique identifiers instantly. v1, v3, v4, v5, v7 — with validation, decoding, and bulk export.
+      </p>
+
+      <!-- Version Selector Pills -->
+      <div id="version-pills" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:var(--spacing-lg);" role="group" aria-label="UUID Version">
+        <button class="btn-category-pill" data-version="1" id="pill-v1" aria-pressed="false">v1 — Time-based</button>
+        <button class="btn-category-pill" data-version="3" id="pill-v3" aria-pressed="false">v3 — MD5 Name</button>
+        <button class="btn-category-pill active" data-version="4" id="pill-v4" aria-pressed="true">v4 — Random</button>
+        <button class="btn-category-pill" data-version="5" id="pill-v5" aria-pressed="false">v5 — SHA-1 Name</button>
+        <button class="btn-category-pill" data-version="7" id="pill-v7" aria-pressed="false">v7 — Unix Epoch</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Generator Card -->
+  <section class="container" style="padding-top:0;transform:translateY(-var(--spacing-xl));" id="generator">
+    <div class="feature-card-elevated" style="margin-top:-var(--spacing-2xl);">
+
+      <!-- Namespace inputs (for v3 / v5) -->
+      <div id="namespace-inputs" class="hidden" style="margin-bottom:var(--spacing-lg);">
+        <div style="display:grid;grid-template-columns:1fr 2fr;gap:var(--spacing-md);" class="md:grid">
+          <div>
+            <label for="namespace-select" class="label-sm" style="display:block;margin-bottom:6px;color:var(--color-body);">Namespace</label>
+            <select id="namespace-select" class="text-input" style="cursor:pointer;">
+              <option value="6ba7b810-9dad-11d1-80b4-00c04fd430c8">DNS</option>
+              <option value="6ba7b811-9dad-11d1-80b4-00c04fd430c8">URL</option>
+              <option value="6ba7b812-9dad-11d1-80b4-00c04fd430c8">OID</option>
+              <option value="6ba7b814-9dad-11d1-80b4-00c04fd430c8">X.500</option>
+              <option value="custom">Custom…</option>
+            </select>
+          </div>
+          <div>
+            <label for="name-input" class="label-sm" style="display:block;margin-bottom:6px;color:var(--color-body);">Name (string to hash)</label>
+            <input
+              type="text"
+              id="name-input"
+              class="text-input"
+              placeholder="e.g. example.com"
+              value="example.com"
+            />
+          </div>
+        </div>
+        <div id="custom-namespace-row" class="hidden" style="margin-top:var(--spacing-sm);">
+          <label for="custom-namespace-input" class="label-sm" style="display:block;margin-bottom:6px;color:var(--color-body);">Custom Namespace UUID</label>
+          <input
+            type="text"
+            id="custom-namespace-input"
+            class="text-input"
+            placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+          />
+        </div>
+      </div>
+
+      <!-- UUID Output Display -->
+      <div
+        id="uuid-display"
+        class="uuid-display"
+        role="textbox"
+        aria-label="Generated UUID"
+        aria-readonly="true"
+        title="Click to copy"
+        style="cursor:pointer;text-align:center;margin-bottom:var(--spacing-lg);"
+      >
+        <span id="uuid-text" class="code-text" style="font-size:clamp(14px,3vw,22px);word-break:break-all;">
+          Generating...
+        </span>
+      </div>
+
+      <!-- Format Options -->
+      <div style="margin-bottom:var(--spacing-lg);">
+        <div class="mono-eyebrow" style="color:var(--color-mute);margin-bottom:var(--spacing-xs);">Output Format</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;" role="group" aria-label="Format options">
+          <button class="format-toggle active" id="fmt-lowercase" data-fmt="lowercase" aria-pressed="true">lowercase</button>
+          <button class="format-toggle" id="fmt-uppercase" data-fmt="uppercase" aria-pressed="false">UPPERCASE</button>
+          <button class="format-toggle active" id="fmt-hyphens" data-fmt="hyphens" aria-pressed="true">with-hyphens</button>
+          <button class="format-toggle" id="fmt-no-hyphens" data-fmt="no-hyphens" aria-pressed="false">no-hyphens</button>
+          <button class="format-toggle" id="fmt-braces" data-fmt="braces" aria-pressed="false">{"{}"} braces</button>
+          <button class="format-toggle" id="fmt-urn" data-fmt="urn" aria-pressed="false">urn: prefix</button>
+          <button class="format-toggle" id="fmt-base64" data-fmt="base64" aria-pressed="false">base64</button>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display:flex;flex-wrap:wrap;gap:var(--spacing-xs);align-items:center;">
+        <button id="generate-btn" class="btn-primary-pill" aria-label="Generate new UUID (Ctrl+G)">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M2 8a6 6 0 1 1 6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M2 5v3h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Generate
+          <span class="kbd" style="color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.15);">Ctrl+G</span>
+        </button>
+
+        <button id="copy-uuid-btn" class="btn-ghost" aria-label="Copy UUID to clipboard (Ctrl+Shift+C)">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <rect x="4" y="4" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
+            <path d="M2 10V2h8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
+          Copy
+          <span class="kbd">⇧C</span>
+        </button>
+
+        <button id="copy-raw-btn" class="btn-ghost" aria-label="Copy raw UUID without formatting">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Copy Raw
+        </button>
+
+        <a href="/bulk" id="bulk-link" class="btn-ghost" aria-label="Go to bulk generator">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <rect x="1" y="1" width="12" height="2.5" rx="1" fill="currentColor" opacity="0.7"/>
+            <rect x="1" y="5.5" width="12" height="2.5" rx="1" fill="currentColor" opacity="0.5"/>
+            <rect x="1" y="10" width="12" height="2.5" rx="1" fill="currentColor" opacity="0.3"/>
+          </svg>
+          Bulk
+        </a>
+      </div>
+
+      <!-- Keyboard shortcut hint -->
+      <div style="margin-top:var(--spacing-md);" class="body-sm" style="color:var(--color-faint);">
+        <span style="color:var(--color-faint);">
+          <kbd class="kbd">Ctrl+G</kbd> Generate &nbsp;·&nbsp;
+          <kbd class="kbd">⇧C</kbd> Copy &nbsp;·&nbsp;
+          Click UUID to copy
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- About This UUID Section (version description cards) -->
+  <section class="container section-band">
+    <div id="version-info" class="feature-card" style="margin-bottom:var(--spacing-xl);">
+      <!-- Populated by JS -->
+    </div>
+
+    <!-- Feature Grid -->
+    <div class="mono-eyebrow" style="color:var(--color-mute);text-align:center;margin-bottom:var(--spacing-xl);">Why uuid-generator.com</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--spacing-md);">
+      <div class="feature-card">
+        <div style="width:32px;height:32px;border-radius:var(--radius-sm);background:var(--color-hairline-soft);display:flex;align-items:center;justify-content:center;margin-bottom:var(--spacing-sm);">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <rect x="1" y="1" width="6" height="6" rx="1.5" fill="#171717"/>
+            <rect x="9" y="1" width="6" height="6" rx="1.5" fill="#171717" opacity="0.4"/>
+            <rect x="1" y="9" width="6" height="6" rx="1.5" fill="#171717" opacity="0.4"/>
+            <rect x="9" y="9" width="6" height="6" rx="1.5" fill="#171717" opacity="0.7"/>
+          </svg>
+        </div>
+        <div class="heading-md" style="margin-bottom:6px;">5 UUID Versions</div>
+        <p class="body-md" style="color:var(--color-body);margin:0;">v1, v3, v4, v5, and v7 — the full RFC 4122 set plus the modern Unix-epoch v7.</p>
+      </div>
+      <div class="feature-card">
+        <div style="width:32px;height:32px;border-radius:var(--radius-sm);background:var(--color-hairline-soft);display:flex;align-items:center;justify-content:center;margin-bottom:var(--spacing-sm);">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <rect x="2" y="4" width="12" height="8" rx="1.5" stroke="#171717" stroke-width="1.2"/>
+            <path d="M5 8h6M9 6l2 2-2 2" stroke="#171717" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="heading-md" style="margin-bottom:6px;">6 Output Formats</div>
+        <p class="body-md" style="color:var(--color-body);margin:0;">Lowercase, UPPERCASE, no hyphens, braces, URN prefix, and Base64 encoding.</p>
+      </div>
+      <div class="feature-card">
+        <div style="width:32px;height:32px;border-radius:var(--radius-sm);background:var(--color-hairline-soft);display:flex;align-items:center;justify-content:center;margin-bottom:var(--spacing-sm);">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M13 10V13H3V10" stroke="#171717" stroke-width="1.2" stroke-linecap="round"/>
+            <path d="M8 3v7M5 7l3 3 3-3" stroke="#171717" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="heading-md" style="margin-bottom:6px;">Bulk Export</div>
+        <p class="body-md" style="color:var(--color-body);margin:0;">Generate up to 10,000 UUIDs and export as TXT, JSON, CSV, or SQL.</p>
+      </div>
+      <div class="feature-card">
+        <div style="width:32px;height:32px;border-radius:var(--radius-sm);background:var(--color-hairline-soft);display:flex;align-items:center;justify-content:center;margin-bottom:var(--spacing-sm);">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="8" r="6" stroke="#171717" stroke-width="1.2"/>
+            <path d="M5 8.5l2 2 4-4" stroke="#171717" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="heading-md" style="margin-bottom:6px;">Validate & Decode</div>
+        <p class="body-md" style="color:var(--color-body);margin:0;">Paste any UUID to validate it and decode the embedded timestamp, version, and variant.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Band -->
+  <section style="padding:var(--spacing-4xl) 0;border-top:1px solid var(--color-hairline);">
+    <div class="container" style="text-align:center;">
+      <div class="heading-lg" style="margin-bottom:var(--spacing-md);">Need UUIDs in bulk?</div>
+      <p class="body-lg" style="color:var(--color-body);margin-bottom:var(--spacing-xl);">Generate thousands of UUIDs and download as TXT, JSON, CSV, or SQL.</p>
+      <div style="display:flex;gap:var(--spacing-md);justify-content:center;flex-wrap:wrap;">
+        <a href="/bulk" class="btn-primary-pill" id="cta-bulk-btn">Go to Bulk Generator</a>
+        <a href="/validate" class="btn-ghost" id="cta-validate-btn" style="border-radius:var(--radius-pill);padding:10px 20px;font-size:16px;">Validate a UUID</a>
+      </div>
+    </div>
+  </section>
 </Layout>
+
+<script define:vars={{ defaultVersion }}>
+  // ============================================================
+  // UUID Generation Library (pure JS, no dependencies)
+  // ============================================================
+
+  // Polyfill-safe crypto.getRandomValues
+  function getRandom() {
+    return crypto.getRandomValues(new Uint8Array(16));
+  }
+
+  function bytesToHex(bytes) {
+    return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  function formatUUID(hex) {
+    return `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20,32)}`;
+  }
+
+  // v1 — time-based (simplified, non-MAC-address variant)
+  function generateV1() {
+    const now = Date.now();
+    // UUID v1 uses 100-nanosecond intervals since Oct 15 1582
+    const uuidEpoch = 122192928000000000n;
+    const timeMs = BigInt(now) * 10000n + uuidEpoch;
+    const timeLow = (timeMs & 0xFFFFFFFFn).toString(16).padStart(8, '0');
+    const timeMid = ((timeMs >> 32n) & 0xFFFFn).toString(16).padStart(4, '0');
+    const timeHigh = (((timeMs >> 48n) & 0x0FFFn) | 0x1000n).toString(16).padStart(4, '0');
+    const clockSeq = (Math.floor(Math.random() * 0x3FFF) | 0x8000).toString(16).padStart(4, '0');
+    const node = Array.from(crypto.getRandomValues(new Uint8Array(6))).map(b => b.toString(16).padStart(2,'0')).join('');
+    return `${timeLow}-${timeMid}-${timeHigh}-${clockSeq}-${node}`;
+  }
+
+  // v4 — random
+  function generateV4() {
+    const bytes = getRandom();
+    bytes[6] = (bytes[6] & 0x0f) | 0x40;
+    bytes[8] = (bytes[8] & 0x3f) | 0x80;
+    const hex = bytesToHex(bytes);
+    return formatUUID(hex);
+  }
+
+  // v7 — Unix epoch ms + random
+  function generateV7() {
+    const bytes = getRandom();
+    const ms = Date.now();
+    // First 48 bits = ms timestamp
+    bytes[0] = (ms / 2**40) & 0xFF;
+    bytes[1] = (ms / 2**32) & 0xFF;
+    bytes[2] = (ms / 2**24) & 0xFF;
+    bytes[3] = (ms / 2**16) & 0xFF;
+    bytes[4] = (ms / 2**8)  & 0xFF;
+    bytes[5] = ms & 0xFF;
+    bytes[6] = (bytes[6] & 0x0f) | 0x70; // version 7
+    bytes[8] = (bytes[8] & 0x3f) | 0x80; // variant
+    const hex = bytesToHex(bytes);
+    return formatUUID(hex);
+  }
+
+  // MD5 via SHA-1 polyfill (browser SubtleCrypto)
+  async function nameBasedUUID(version, namespace, name) {
+    const algorithm = version === '3' ? 'MD5' : 'SHA-1';
+    const nsBytes = uuidToBytes(namespace);
+    const nameBytes = new TextEncoder().encode(name);
+    const combined = new Uint8Array(nsBytes.length + nameBytes.length);
+    combined.set(nsBytes);
+    combined.set(nameBytes, nsBytes.length);
+
+    let hash;
+    if (version === '5') {
+      const hashBuf = await crypto.subtle.digest('SHA-1', combined);
+      hash = new Uint8Array(hashBuf);
+    } else {
+      // v3 uses MD5 — implement a JS MD5
+      hash = md5(combined);
+    }
+
+    const bytes = hash.slice(0, 16);
+    const ver = version === '3' ? 0x30 : 0x50;
+    bytes[6] = (bytes[6] & 0x0f) | ver;
+    bytes[8] = (bytes[8] & 0x3f) | 0x80;
+    return formatUUID(bytesToHex(bytes));
+  }
+
+  function uuidToBytes(uuid) {
+    const hex = uuid.replace(/-/g, '');
+    const bytes = new Uint8Array(16);
+    for (let i = 0; i < 16; i++) bytes[i] = parseInt(hex.slice(i*2, i*2+2), 16);
+    return bytes;
+  }
+
+  // MD5 implementation (for v3)
+  function md5(input) {
+    function safeAdd(x, y) { const lsw = (x & 0xFFFF) + (y & 0xFFFF); return (((x >> 16) + (y >> 16) + (lsw >> 16)) << 16) | (lsw & 0xFFFF); }
+    function bitRotateLeft(num, cnt) { return (num << cnt) | (num >>> (32 - cnt)); }
+    function md5cmn(q,a,b,x,s,t) { return safeAdd(bitRotateLeft(safeAdd(safeAdd(a,q),safeAdd(x,t)),s),b); }
+    function md5ff(a,b,c,d,x,s,t){return md5cmn((b&c)|((~b)&d),a,b,x,s,t);}
+    function md5gg(a,b,c,d,x,s,t){return md5cmn((b&d)|(c&(~d)),a,b,x,s,t);}
+    function md5hh(a,b,c,d,x,s,t){return md5cmn(b^c^d,a,b,x,s,t);}
+    function md5ii(a,b,c,d,x,s,t){return md5cmn(c^(b|(~d)),a,b,x,s,t);}
+
+    const bytes = Array.from(input);
+    const len8 = bytes.length;
+    const len32 = Math.ceil((len8 + 9) / 64) * 16;
+    const M = new Int32Array(len32);
+    for (let i = 0; i < len8; i++) M[i >> 2] |= bytes[i] << ((i % 4) * 8);
+    M[len8 >> 2] |= 0x80 << ((len8 % 4) * 8);
+    M[len32 - 2] = len8 * 8;
+
+    let a=1732584193,b=-271733879,c=-1732584194,d=271733878;
+    for (let i = 0; i < M.length; i += 16) {
+      const [oA,oB,oC,oD]=[a,b,c,d];
+      a=md5ff(a,b,c,d,M[i+0],7,-680876936);d=md5ff(d,a,b,c,M[i+1],12,-389564586);c=md5ff(c,d,a,b,M[i+2],17,606105819);b=md5ff(b,c,d,a,M[i+3],22,-1044525330);
+      a=md5ff(a,b,c,d,M[i+4],7,-176418897);d=md5ff(d,a,b,c,M[i+5],12,1200080426);c=md5ff(c,d,a,b,M[i+6],17,-1473231341);b=md5ff(b,c,d,a,M[i+7],22,-45705983);
+      a=md5ff(a,b,c,d,M[i+8],7,1770035416);d=md5ff(d,a,b,c,M[i+9],12,-1958414417);c=md5ff(c,d,a,b,M[i+10],17,-42063);b=md5ff(b,c,d,a,M[i+11],22,-1990404162);
+      a=md5ff(a,b,c,d,M[i+12],7,1804603682);d=md5ff(d,a,b,c,M[i+13],12,-40341101);c=md5ff(c,d,a,b,M[i+14],17,-1502002290);b=md5ff(b,c,d,a,M[i+15],22,1236535329);
+      a=md5gg(a,b,c,d,M[i+1],5,-165796510);d=md5gg(d,a,b,c,M[i+6],9,-1069501632);c=md5gg(c,d,a,b,M[i+11],14,643717713);b=md5gg(b,c,d,a,M[i+0],20,-373897302);
+      a=md5gg(a,b,c,d,M[i+5],5,-701558691);d=md5gg(d,a,b,c,M[i+10],9,38016083);c=md5gg(c,d,a,b,M[i+15],14,-660478335);b=md5gg(b,c,d,a,M[i+4],20,-405537848);
+      a=md5gg(a,b,c,d,M[i+9],5,568446438);d=md5gg(d,a,b,c,M[i+14],9,-1019803690);c=md5gg(c,d,a,b,M[i+3],14,-187363961);b=md5gg(b,c,d,a,M[i+8],20,1163531501);
+      a=md5gg(a,b,c,d,M[i+13],5,-1444681467);d=md5gg(d,a,b,c,M[i+2],9,-51403784);c=md5gg(c,d,a,b,M[i+7],14,1735328473);b=md5gg(b,c,d,a,M[i+12],20,-1926607734);
+      a=md5hh(a,b,c,d,M[i+5],4,-378558);d=md5hh(d,a,b,c,M[i+8],11,-2022574463);c=md5hh(c,d,a,b,M[i+11],16,1839030562);b=md5hh(b,c,d,a,M[i+14],23,-35309556);
+      a=md5hh(a,b,c,d,M[i+1],4,-1530992060);d=md5hh(d,a,b,c,M[i+4],11,1272893353);c=md5hh(c,d,a,b,M[i+7],16,-155497632);b=md5hh(b,c,d,a,M[i+10],23,-1094730640);
+      a=md5hh(a,b,c,d,M[i+13],4,681279174);d=md5hh(d,a,b,c,M[i+0],11,-358537222);c=md5hh(c,d,a,b,M[i+3],16,-722521979);b=md5hh(b,c,d,a,M[i+6],23,76029189);
+      a=md5hh(a,b,c,d,M[i+9],4,-640364487);d=md5hh(d,a,b,c,M[i+12],11,-421815835);c=md5hh(c,d,a,b,M[i+15],16,530742520);b=md5hh(b,c,d,a,M[i+2],23,-995338651);
+      a=md5ii(a,b,c,d,M[i+0],6,-198630844);d=md5ii(d,a,b,c,M[i+7],10,1126891415);c=md5ii(c,d,a,b,M[i+14],15,-1416354905);b=md5ii(b,c,d,a,M[i+5],21,-57434055);
+      a=md5ii(a,b,c,d,M[i+12],6,1700485571);d=md5ii(d,a,b,c,M[i+3],10,-1894986606);c=md5ii(c,d,a,b,M[i+10],15,-1051523);b=md5ii(b,c,d,a,M[i+1],21,-2054922799);
+      a=md5ii(a,b,c,d,M[i+8],6,1873313359);d=md5ii(d,a,b,c,M[i+15],10,-30611744);c=md5ii(c,d,a,b,M[i+6],15,-1560198380);b=md5ii(b,c,d,a,M[i+13],21,1309151649);
+      a=md5ii(a,b,c,d,M[i+4],6,-145523070);d=md5ii(d,a,b,c,M[i+11],10,-1120210379);c=md5ii(c,d,a,b,M[i+2],15,718787259);b=md5ii(b,c,d,a,M[i+9],21,-343485551);
+      a=safeAdd(a,oA);b=safeAdd(b,oB);c=safeAdd(c,oC);d=safeAdd(d,oD);
+    }
+
+    const result = new Uint8Array(16);
+    const words = [a,b,c,d];
+    for (let i=0;i<4;i++) for (let j=0;j<4;j++) result[i*4+j]=(words[i]>>>(j*8))&0xFF;
+    return result;
+  }
+
+  // ============================================================
+  // Format Helpers
+  // ============================================================
+
+  function applyFormat(uuid, opts) {
+    let out = uuid;
+    if (opts.noHyphens) out = out.replace(/-/g, '');
+    if (opts.uppercase) out = out.toUpperCase();
+    if (opts.braces) out = `{${out}}`;
+    if (opts.urn) out = `urn:uuid:${uuid}`; // URN always uses standard form
+    if (opts.base64) {
+      const raw = uuid.replace(/-/g, '');
+      const bytes = Uint8Array.from({ length: 16 }, (_, i) => parseInt(raw.slice(i*2, i*2+2), 16));
+      out = btoa(String.fromCharCode(...bytes));
+    }
+    return out;
+  }
+
+  // ============================================================
+  // State
+  // ============================================================
+
+  let currentVersion = defaultVersion;
+  let rawUUID = '';
+  let formats = {
+    uppercase: false,
+    noHyphens: false,
+    braces: false,
+    urn: false,
+    base64: false,
+  };
+
+  // ============================================================
+  // Version Descriptions
+  // ============================================================
+
+  const versionInfo = {
+    '1': {
+      title: 'UUID Version 1 — Time-based',
+      desc: 'Generated from the current timestamp (100-nanosecond intervals since Oct 15, 1582) and a node ID. Version 1 UUIDs are sortable by creation time but can leak the generating machine\'s MAC address.',
+      use: 'Database primary keys where time-ordering matters.',
+      example: 'adc2b7d0-2c5e-11ef-a3b1-00163e010000',
+    },
+    '3': {
+      title: 'UUID Version 3 — MD5 Name-based',
+      desc: 'Deterministic UUID computed by MD5-hashing a namespace UUID and a name string. Given the same inputs you always get the same UUID. Not considered cryptographically secure.',
+      use: 'Stable identifiers for URIs, DNS names, or any string where you need reproducibility.',
+      example: '9073926b-929f-31c2-abc9-fad77ae3e8eb',
+    },
+    '4': {
+      title: 'UUID Version 4 — Random',
+      desc: 'Generated from 122 bits of cryptographically-secure random data (CSPRNG). The most widely used version. Collision probability is astronomically small — ~1 in 5.3×10³⁶.',
+      use: 'General-purpose unique identifiers: session tokens, row IDs, file names.',
+      example: '550e8400-e29b-41d4-a716-446655440000',
+    },
+    '5': {
+      title: 'UUID Version 5 — SHA-1 Name-based',
+      desc: 'Like v3 but uses SHA-1 instead of MD5. Preferred over v3 because SHA-1 is stronger than MD5 (though neither is used for security here — only uniqueness). Same namespace + name always yield the same UUID.',
+      use: 'Stable identifiers when you need a stronger hash than v3.',
+      example: '886313e1-3b8a-5372-9b90-0c9aee199e5d',
+    },
+    '7': {
+      title: 'UUID Version 7 — Unix Epoch Time',
+      desc: 'New in RFC 9562. Encodes the current Unix timestamp in milliseconds in the most-significant bits, followed by random bits. V7 UUIDs sort lexicographically by creation time and work great as database primary keys.',
+      use: 'Modern database primary keys — lexicographic sort = chronological sort.',
+      example: '018f3b6a-c000-7000-8000-000000000000',
+    },
+  };
+
+  function renderVersionInfo(v) {
+    const info = versionInfo[v];
+    if (!info) return;
+    const el = document.getElementById('version-info');
+    if (!el) return;
+    el.innerHTML = `
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:var(--spacing-md);">
+        <div style="flex:1;min-width:220px;">
+          <div class="mono-eyebrow" style="color:var(--color-mute);margin-bottom:6px;">UUID v${v}</div>
+          <div class="heading-md" style="margin-bottom:var(--spacing-xs);">${info.title}</div>
+          <p class="body-md" style="color:var(--color-body);margin:0 0 var(--spacing-sm);">${info.desc}</p>
+          <div class="body-sm" style="color:var(--color-mute);">
+            <strong style="color:var(--color-body);">Typical use:</strong> ${info.use}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // ============================================================
+  // Generate & Display
+  // ============================================================
+
+  async function generate() {
+    const btn = document.getElementById('generate-btn');
+    const displayEl = document.getElementById('uuid-display');
+    displayEl?.classList.add('generating');
+
+    let uuid = '';
+    try {
+      if (currentVersion === '1') {
+        uuid = generateV1();
+      } else if (currentVersion === '4') {
+        uuid = generateV4();
+      } else if (currentVersion === '7') {
+        uuid = generateV7();
+      } else if (currentVersion === '3' || currentVersion === '5') {
+        const nsSelect = document.getElementById('namespace-select');
+        const nameInput = document.getElementById('name-input');
+        const customNsInput = document.getElementById('custom-namespace-input');
+        let ns = nsSelect?.value;
+        if (ns === 'custom') ns = customNsInput?.value || '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
+        const name = nameInput?.value || 'example.com';
+        uuid = await nameBasedUUID(currentVersion, ns, name);
+      }
+    } catch(e) {
+      uuid = generateV4(); // fallback
+    }
+
+    rawUUID = uuid;
+    window.lastUUID = applyFormat(uuid, formats);
+    displayFormatted();
+
+    displayEl?.classList.remove('generating');
+    displayEl?.classList.remove('uuid-just-generated');
+    void displayEl?.offsetWidth; // reflow
+    displayEl?.classList.add('uuid-just-generated');
+  }
+
+  function displayFormatted() {
+    const textEl = document.getElementById('uuid-text');
+    if (!textEl) return;
+    const formatted = applyFormat(rawUUID, formats);
+    window.lastUUID = formatted;
+    textEl.textContent = formatted;
+  }
+
+  // ============================================================
+  // Format toggles
+  // ============================================================
+
+  const mutuallyExclusive = {
+    uppercase: 'lowercase',
+    lowercase: 'uppercase',
+    hyphens: 'no-hyphens',
+    'no-hyphens': 'hyphens',
+    base64: ['braces','urn','no-hyphens','hyphens','uppercase','lowercase'],
+    urn: ['braces','base64'],
+    braces: ['urn','base64'],
+  };
+
+  document.querySelectorAll('.format-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const fmt = btn.getAttribute('data-fmt');
+      const isActive = btn.classList.contains('active');
+
+      // Deactivate mutual exclusives
+      const excludes = Array.isArray(mutuallyExclusive[fmt]) ? mutuallyExclusive[fmt] : [mutuallyExclusive[fmt]];
+      excludes.forEach(ex => {
+        if (!ex) return;
+        document.querySelector(`.format-toggle[data-fmt="${ex}"]`)?.classList.remove('active');
+        document.querySelector(`.format-toggle[data-fmt="${ex}"]`)?.setAttribute('aria-pressed','false');
+      });
+
+      btn.classList.toggle('active', !isActive);
+      btn.setAttribute('aria-pressed', String(!isActive));
+
+      // Update formats state
+      formats.uppercase = document.getElementById('fmt-uppercase')?.classList.contains('active') ?? false;
+      formats.noHyphens = document.getElementById('fmt-no-hyphens')?.classList.contains('active') ?? false;
+      formats.braces = document.getElementById('fmt-braces')?.classList.contains('active') ?? false;
+      formats.urn = document.getElementById('fmt-urn')?.classList.contains('active') ?? false;
+      formats.base64 = document.getElementById('fmt-base64')?.classList.contains('active') ?? false;
+
+      displayFormatted();
+    });
+  });
+
+  // ============================================================
+  // Version Pills
+  // ============================================================
+
+  function switchVersion(v) {
+    currentVersion = v;
+    document.querySelectorAll('.btn-category-pill[data-version]').forEach(btn => {
+      const isThis = btn.getAttribute('data-version') === v;
+      btn.classList.toggle('active', isThis);
+      btn.setAttribute('aria-pressed', String(isThis));
+    });
+
+    // Show/hide namespace inputs
+    const nsInputs = document.getElementById('namespace-inputs');
+    if (v === '3' || v === '5') {
+      nsInputs?.classList.remove('hidden');
+    } else {
+      nsInputs?.classList.add('hidden');
+    }
+
+    renderVersionInfo(v);
+    generate();
+  }
+
+  document.querySelectorAll('.btn-category-pill[data-version]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const v = btn.getAttribute('data-version');
+      if (v) switchVersion(v);
+    });
+  });
+
+  // ============================================================
+  // Generate Button
+  // ============================================================
+
+  document.getElementById('generate-btn')?.addEventListener('click', () => {
+    generate();
+  });
+
+  // ============================================================
+  // Copy Buttons
+  // ============================================================
+
+  document.getElementById('copy-uuid-btn')?.addEventListener('click', () => {
+    const text = document.getElementById('uuid-text')?.textContent?.trim() ?? '';
+    navigator.clipboard.writeText(text).then(() => {
+      window.showToast?.('UUID copied to clipboard!', '✓');
+    }).catch(() => {
+      window.showToast?.('Copy failed — please select and copy manually.', '✗');
+    });
+  });
+
+  document.getElementById('copy-raw-btn')?.addEventListener('click', () => {
+    navigator.clipboard.writeText(rawUUID).then(() => {
+      window.showToast?.('Raw UUID copied!', '✓');
+    });
+  });
+
+  // Click on UUID display to copy
+  document.getElementById('uuid-display')?.addEventListener('click', () => {
+    const text = document.getElementById('uuid-text')?.textContent?.trim() ?? '';
+    navigator.clipboard.writeText(text).then(() => {
+      window.showToast?.('Copied!', '✓');
+    });
+  });
+
+  // ============================================================
+  // Namespace / Name inputs (v3/v5)
+  // ============================================================
+
+  document.getElementById('namespace-select')?.addEventListener('change', (e) => {
+    const customRow = document.getElementById('custom-namespace-row');
+    if ((e.target).value === 'custom') {
+      customRow?.classList.remove('hidden');
+    } else {
+      customRow?.classList.add('hidden');
+    }
+    generate();
+  });
+
+  document.getElementById('name-input')?.addEventListener('input', () => {
+    clearTimeout(window._nameDebounce);
+    window._nameDebounce = setTimeout(generate, 400);
+  });
+
+  document.getElementById('custom-namespace-input')?.addEventListener('input', () => {
+    clearTimeout(window._nsDebounce);
+    window._nsDebounce = setTimeout(generate, 400);
+  });
+
+  // ============================================================
+  // Init
+  // ============================================================
+  switchVersion(defaultVersion);
+</script>

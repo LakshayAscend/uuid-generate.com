@@ -1,0 +1,166 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+  title="About UUIDs — What is a UUID?"
+  description="Learn about UUIDs (Universally Unique Identifiers): what they are, UUID versions (v1, v3, v4, v5, v7), structure, RFC 4122, and when to use each version."
+  canonical="https://uuid-generator.com/about"
+>
+  <!-- Header -->
+  <section style="padding:var(--spacing-4xl) 0 var(--spacing-xl);border-bottom:1px solid var(--color-hairline);">
+    <div class="container" style="max-width:780px;">
+      <div class="mono-eyebrow" style="color:var(--color-mute);margin-bottom:var(--spacing-sm);">Reference</div>
+      <h1 class="heading-lg" style="margin:0 0 var(--spacing-xs);">About UUIDs</h1>
+      <p class="body-lg" style="color:var(--color-body);margin:0;">Everything you need to know about Universally Unique Identifiers — structure, versions, and when to use which.</p>
+    </div>
+  </section>
+
+  <!-- Article -->
+  <section class="container section-band" style="max-width:780px;">
+    
+    <!-- What is a UUID -->
+    <div style="margin-bottom:var(--spacing-3xl);">
+      <h2 class="heading-md" id="what-is-uuid" style="margin-bottom:var(--spacing-md);">What is a UUID?</h2>
+      <p class="body-lg" style="color:var(--color-body);margin-bottom:var(--spacing-md);">
+        A <strong>UUID (Universally Unique Identifier)</strong>, also known as a GUID (Globally Unique Identifier), is a 128-bit label used to uniquely identify objects in computer systems. Defined in <a href="https://www.rfc-editor.org/rfc/rfc9562" class="nav-link" style="color:var(--color-link);display:inline;">RFC 9562</a> (which supersedes RFC 4122), UUIDs are represented as 32 hexadecimal digits in the format:
+      </p>
+      <div class="code-block" style="margin-bottom:var(--spacing-md);">
+        <code>xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx</code>
+      </div>
+      <p class="body-md" style="color:var(--color-body);">
+        Where <strong>M</strong> is the version digit (1–7) and <strong>N</strong> is the variant field (8, 9, a, or b for RFC 4122 UUIDs). A UUID is 36 characters long including the hyphens (32 hex + 4 hyphens).
+      </p>
+    </div>
+
+    <!-- Structure -->
+    <div style="margin-bottom:var(--spacing-3xl);">
+      <h2 class="heading-md" id="structure" style="margin-bottom:var(--spacing-md);">UUID Structure</h2>
+      <div style="border:1px solid var(--color-hairline);border-radius:var(--radius-md);overflow:hidden;margin-bottom:var(--spacing-md);">
+        <table style="width:100%;border-collapse:collapse;">
+          <thead>
+            <tr style="background:var(--color-canvas);">
+              <th style="padding:10px 14px;text-align:left;font-size:12px;font-weight:500;color:var(--color-mute);border-bottom:1px solid var(--color-hairline);">Field</th>
+              <th style="padding:10px 14px;text-align:left;font-size:12px;font-weight:500;color:var(--color-mute);border-bottom:1px solid var(--color-hairline);">Bits</th>
+              <th style="padding:10px 14px;text-align:left;font-size:12px;font-weight:500;color:var(--color-mute);border-bottom:1px solid var(--color-hairline);">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="padding:8px 14px;border-bottom:1px solid var(--color-hairline);font-family:var(--font-mono);font-size:12px;">time_low</td><td style="padding:8px 14px;border-bottom:1px solid var(--color-hairline);color:var(--color-mute);">32</td><td style="padding:8px 14px;border-bottom:1px solid var(--color-hairline);color:var(--color-body);" class="body-md">Low field of timestamp</td></tr>
+            <tr><td style="padding:8px 14px;border-bottom:1px solid var(--color-hairline);font-family:var(--font-mono);font-size:12px;">time_mid</td><td style="padding:8px 14px;border-bottom:1px solid var(--color-hairline);color:var(--color-mute);">16</td><td style="padding:8px 14px;border-bottom:1px solid var(--color-hairline);color:var(--color-body);" class="body-md">Middle field of timestamp</td></tr>
+            <tr><td style="padding:8px 14px;border-bottom:1px solid var(--color-hairline);font-family:var(--font-mono);font-size:12px;">time_hi_and_version</td><td style="padding:8px 14px;border-bottom:1px solid var(--color-hairline);color:var(--color-mute);">16</td><td style="padding:8px 14px;border-bottom:1px solid var(--color-hairline);color:var(--color-body);" class="body-md">High field of timestamp + 4-bit version</td></tr>
+            <tr><td style="padding:8px 14px;border-bottom:1px solid var(--color-hairline);font-family:var(--font-mono);font-size:12px;">clock_seq_hi_and_res</td><td style="padding:8px 14px;border-bottom:1px solid var(--color-hairline);color:var(--color-mute);">8</td><td style="padding:8px 14px;border-bottom:1px solid var(--color-hairline);color:var(--color-body);" class="body-md">Variant bits + high clock sequence</td></tr>
+            <tr><td style="padding:8px 14px;border-bottom:1px solid var(--color-hairline);font-family:var(--font-mono);font-size:12px;">clock_seq_low</td><td style="padding:8px 14px;border-bottom:1px solid var(--color-hairline);color:var(--color-mute);">8</td><td style="padding:8px 14px;border-bottom:1px solid var(--color-hairline);color:var(--color-body);" class="body-md">Low clock sequence field</td></tr>
+            <tr><td style="padding:8px 14px;font-family:var(--font-mono);font-size:12px;">node</td><td style="padding:8px 14px;color:var(--color-mute);">48</td><td style="padding:8px 14px;color:var(--color-body);" class="body-md">Spatially unique node identifier</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Versions -->
+    <div style="margin-bottom:var(--spacing-3xl);">
+      <h2 class="heading-md" id="versions" style="margin-bottom:var(--spacing-xl);">UUID Versions</h2>
+
+      <div style="display:flex;flex-direction:column;gap:var(--spacing-md);">
+        <!-- v1 -->
+        <div class="feature-card">
+          <div style="display:flex;align-items:center;gap:var(--spacing-xs);margin-bottom:var(--spacing-xs);">
+            <span style="font-family:var(--font-mono);font-size:11px;font-weight:600;background:var(--color-hairline-soft);border:1px solid var(--color-hairline);border-radius:var(--radius-sm);padding:2px 7px;">v1</span>
+            <h3 class="heading-md" style="margin:0;">Time-based</h3>
+          </div>
+          <p class="body-md" style="color:var(--color-body);margin-bottom:var(--spacing-sm);">Generated using the current timestamp (100-nanosecond intervals since 15 Oct 1582) and a node identifier (originally MAC address). Successive v1 UUIDs from the same host are sortable.</p>
+          <div class="code-block" style="font-size:12px;">6ba7b810-9dad-11d1-80b4-00c04fd430c8</div>
+          <div style="margin-top:var(--spacing-sm);display:flex;flex-wrap:wrap;gap:6px;">
+            <span style="font-size:11px;color:var(--color-body);background:var(--color-hairline-soft);border-radius:var(--radius-sm);padding:2px 8px;border:1px solid var(--color-hairline);">✓ Time-sortable</span>
+            <span style="font-size:11px;color:var(--color-body);background:var(--color-hairline-soft);border-radius:var(--radius-sm);padding:2px 8px;border:1px solid var(--color-hairline);">⚠ Exposes timestamp</span>
+          </div>
+        </div>
+
+        <!-- v3 -->
+        <div class="feature-card">
+          <div style="display:flex;align-items:center;gap:var(--spacing-xs);margin-bottom:var(--spacing-xs);">
+            <span style="font-family:var(--font-mono);font-size:11px;font-weight:600;background:var(--color-hairline-soft);border:1px solid var(--color-hairline);border-radius:var(--radius-sm);padding:2px 7px;">v3</span>
+            <h3 class="heading-md" style="margin:0;">MD5 Name-based</h3>
+          </div>
+          <p class="body-md" style="color:var(--color-body);margin-bottom:var(--spacing-sm);">Deterministic — MD5-hash of a namespace UUID and name string. Same input always yields the same UUID. Not cryptographically secure (MD5 is broken), but sufficient for uniqueness.</p>
+          <div class="code-block" style="font-size:12px;">9073926b-929f-31c2-abc9-fad77ae3e8eb</div>
+        </div>
+
+        <!-- v4 -->
+        <div class="feature-card" style="border-color:#d4d4d4;">
+          <div style="display:flex;align-items:center;gap:var(--spacing-xs);margin-bottom:var(--spacing-xs);">
+            <span style="font-family:var(--font-mono);font-size:11px;font-weight:600;background:var(--color-ink);color:#fff;border-radius:var(--radius-sm);padding:2px 7px;">v4</span>
+            <h3 class="heading-md" style="margin:0;">Random</h3>
+            <span style="font-size:11px;color:var(--color-mute);font-weight:500;">Most popular</span>
+          </div>
+          <p class="body-md" style="color:var(--color-body);margin-bottom:var(--spacing-sm);">122 bits of cryptographically-secure random data from the OS CSPRNG. The collision probability for 1 billion UUIDs is ~1 in 2.71×10<sup>18</sup>. No structure or ordering.</p>
+          <div class="code-block" style="font-size:12px;">550e8400-e29b-41d4-a716-446655440000</div>
+          <div style="margin-top:var(--spacing-sm);display:flex;flex-wrap:wrap;gap:6px;">
+            <span style="font-size:11px;color:var(--color-body);background:var(--color-hairline-soft);border-radius:var(--radius-sm);padding:2px 8px;border:1px solid var(--color-hairline);">✓ Cryptographically random</span>
+            <span style="font-size:11px;color:var(--color-body);background:var(--color-hairline-soft);border-radius:var(--radius-sm);padding:2px 8px;border:1px solid var(--color-hairline);">✓ No PII leakage</span>
+          </div>
+        </div>
+
+        <!-- v5 -->
+        <div class="feature-card">
+          <div style="display:flex;align-items:center;gap:var(--spacing-xs);margin-bottom:var(--spacing-xs);">
+            <span style="font-family:var(--font-mono);font-size:11px;font-weight:600;background:var(--color-hairline-soft);border:1px solid var(--color-hairline);border-radius:var(--radius-sm);padding:2px 7px;">v5</span>
+            <h3 class="heading-md" style="margin:0;">SHA-1 Name-based</h3>
+          </div>
+          <p class="body-md" style="color:var(--color-body);margin-bottom:var(--spacing-sm);">Like v3 but uses SHA-1 instead of MD5. Preferred over v3. Deterministic given same namespace + name. Use DNS namespace for domain names, URL namespace for URLs.</p>
+          <div class="code-block" style="font-size:12px;">886313e1-3b8a-5372-9b90-0c9aee199e5d</div>
+        </div>
+
+        <!-- v7 -->
+        <div class="feature-card">
+          <div style="display:flex;align-items:center;gap:var(--spacing-xs);margin-bottom:var(--spacing-xs);">
+            <span style="font-family:var(--font-mono);font-size:11px;font-weight:600;background:var(--color-hairline-soft);border:1px solid var(--color-hairline);border-radius:var(--radius-sm);padding:2px 7px;">v7</span>
+            <h3 class="heading-md" style="margin:0;">Unix Epoch Time-ordered</h3>
+            <span style="font-size:11px;color:var(--color-link);font-weight:500;">New in RFC 9562</span>
+          </div>
+          <p class="body-md" style="color:var(--color-body);margin-bottom:var(--spacing-sm);">The most modern UUID version. Encodes the Unix timestamp in milliseconds in the 48 most-significant bits, making v7 UUIDs lexicographically sortable by time — a huge advantage for database B-tree indexes.</p>
+          <div class="code-block" style="font-size:12px;">018f3b6a-c000-7000-8000-000000000001</div>
+          <div style="margin-top:var(--spacing-sm);display:flex;flex-wrap:wrap;gap:6px;">
+            <span style="font-size:11px;color:var(--color-body);background:var(--color-hairline-soft);border-radius:var(--radius-sm);padding:2px 8px;border:1px solid var(--color-hairline);">✓ Lexicographically sortable</span>
+            <span style="font-size:11px;color:var(--color-body);background:var(--color-hairline-soft);border-radius:var(--radius-sm);padding:2px 8px;border:1px solid var(--color-hairline);">✓ Great for DB primary keys</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RFC 4122 -->
+    <div style="margin-bottom:var(--spacing-3xl);" id="rfc4122">
+      <h2 class="heading-md" style="margin-bottom:var(--spacing-md);">RFC 4122 &amp; RFC 9562</h2>
+      <p class="body-md" style="color:var(--color-body);margin-bottom:var(--spacing-sm);">
+        UUIDs were originally standardized in <strong>RFC 4122</strong> (2005). In <strong>RFC 9562</strong> (2024), the IETF updated the specification to formally add UUID versions 6, 7, and 8, deprecate v2, and clarify existing behavior. UUID v4 and v7 are the versions recommended for most new use cases.
+      </p>
+      <p class="body-md" style="color:var(--color-body);">
+        All UUIDs generated on this site are fully compliant with RFC 9562.
+      </p>
+    </div>
+
+    <!-- FAQ -->
+    <div id="faq">
+      <h2 class="heading-md" style="margin-bottom:var(--spacing-xl);">Frequently Asked Questions</h2>
+      <div style="display:flex;flex-direction:column;gap:var(--spacing-md);">
+        <div class="feature-card">
+          <h3 class="label-sm" style="margin-bottom:6px;">Can two UUIDs ever be the same?</h3>
+          <p class="body-md" style="color:var(--color-body);margin:0;">In theory, yes, but the probability is so small it's effectively impossible. For v4 UUIDs, generating 1 billion UUIDs per second for 100 years would give a 50% chance of a single collision.</p>
+        </div>
+        <div class="feature-card">
+          <h3 class="label-sm" style="margin-bottom:6px;">Which UUID version should I use?</h3>
+          <p class="body-md" style="color:var(--color-body);margin:0;">Use <strong>v4</strong> when you need a random, opaque identifier. Use <strong>v7</strong> for database primary keys (time-sortable). Use <strong>v5</strong> when you need a reproducible ID from a known namespace+name pair.</p>
+        </div>
+        <div class="feature-card">
+          <h3 class="label-sm" style="margin-bottom:6px;">Is UUID the same as GUID?</h3>
+          <p class="body-md" style="color:var(--color-body);margin:0;">Yes. GUID (Globally Unique Identifier) is Microsoft's name for UUID. They are technically identical in structure; GUIDs are sometimes displayed with uppercase and braces: <code class="code-text">&#123;550E8400-E29B-...&#125;</code>.</p>
+        </div>
+        <div class="feature-card">
+          <h3 class="label-sm" style="margin-bottom:6px;">Are the UUIDs generated here secure?</h3>
+          <p class="body-md" style="color:var(--color-body);margin:0;">All v4 and v7 UUIDs are generated using <code class="code-text">crypto.getRandomValues()</code> — the browser's CSPRNG — entirely in your browser. Nothing is sent to our servers.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+

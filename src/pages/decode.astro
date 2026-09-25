@@ -1,0 +1,242 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+  title="UUID Decoder — Decode UUID Structure"
+  description="Decode any UUID to reveal its version, variant, embedded timestamp (v1/v7), node ID, and clock sequence. Full RFC 4122 analysis."
+  canonical="https://uuid-generator.com/decode"
+>
+  <!-- Header -->
+  <section style="padding:var(--spacing-4xl) 0 var(--spacing-xl);border-bottom:1px solid var(--color-hairline);">
+    <div class="container">
+      <div class="mono-eyebrow" style="color:var(--color-mute);margin-bottom:var(--spacing-sm);">Tool</div>
+      <h1 class="heading-lg" style="margin:0 0 var(--spacing-xs);">UUID Decoder</h1>
+      <p class="body-lg" style="color:var(--color-body);margin:0;">
+        Paste a UUID to decode its binary structure, version bits, variant field, and embedded metadata.
+      </p>
+    </div>
+  </section>
+
+  <!-- Decoder Tool -->
+  <section class="container section-band">
+    <div style="max-width:800px;margin:0 auto;">
+      <div class="feature-card-elevated" style="margin-bottom:var(--spacing-xl);">
+        <label for="decode-input" class="label-sm" style="display:block;margin-bottom:var(--spacing-xs);color:var(--color-body);">UUID to decode</label>
+        <div style="display:flex;gap:var(--spacing-xs);margin-bottom:var(--spacing-md);">
+          <input
+            type="text"
+            id="decode-input"
+            class="text-input"
+            placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+            spellcheck="false"
+            autocomplete="off"
+            autofocus
+          />
+          <button id="decode-btn" class="btn-primary" style="flex-shrink:0;">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M2 7h10M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Decode
+          </button>
+        </div>
+
+        <!-- Quick examples -->
+        <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
+          <span class="body-sm" style="color:var(--color-mute);">Try:</span>
+          <button class="btn-ghost decode-example" data-uuid="6ba7b810-9dad-11d1-80b4-00c04fd430c8" id="ex-decode-v1" style="font-size:11px;padding:3px 8px;">v1 UUID</button>
+          <button class="btn-ghost decode-example" data-uuid="550e8400-e29b-41d4-a716-446655440000" id="ex-decode-v4" style="font-size:11px;padding:3px 8px;">v4 UUID</button>
+          <button class="btn-ghost decode-example" data-uuid="018f3b6a-c000-7000-8000-000000000000" id="ex-decode-v7" style="font-size:11px;padding:3px 8px;">v7 UUID</button>
+        </div>
+      </div>
+
+      <!-- Decoded output -->
+      <div id="decode-output"></div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  // ============================================================
+  // UUID Bit-level Decoder
+  // ============================================================
+
+  function decodeUUID(input) {
+    const clean = input.trim()
+      .toLowerCase()
+      .replace(/^urn:uuid:/i, '')
+      .replace(/^\{|\}$/g, '');
+
+    const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-7][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!UUID_RE.test(clean)) return null;
+
+    const hex = clean.replace(/-/g,'');
+    const bytes = Array.from({length:16},(_,i) => parseInt(hex.slice(i*2,i*2+2),16));
+
+    const version = (bytes[6] >> 4) & 0xF;
+    const variantBits = bytes[8] >> 6;
+
+    const sections = [
+      { label: 'time_low', bits: 32, value: hex.slice(0,8), desc: version === 1 ? 'Low 32 bits of time' : version === 7 ? 'Unix ms (high 32 bits)' : 'Random' },
+      { label: 'time_mid', bits: 16, value: hex.slice(8,12), desc: version === 1 ? 'Mid 16 bits of time' : version === 7 ? 'Unix ms (low 16 bits)' : 'Random' },
+      { label: `version (${version}) + time_hi`, bits: 16, value: hex.slice(12,16), desc: `4-bit version field = 0x${version.toString(16)} (${version}), then 12 random/time bits` },
+      { label: 'variant + clock_seq_hi', bits: 16, value: hex.slice(16,20), desc: `2-bit variant = ${(bytes[8]>>6).toString(2).padStart(2,'0')}b (RFC 4122), 6 clock bits` },
+      { label: 'node', bits: 48, value: hex.slice(20,32), desc: version === 1 ? 'Node ID (MAC address or random)' : version === 7 ? 'Additional random bits' : '48 random bits' },
+    ];
+
+    let extra = [];
+
+    if (version === 1) {
+      const uuidEpoch = 122192928000000000n;
+      const timeLow = BigInt('0x' + hex.slice(0,8));
+      const timeMid = BigInt('0x' + hex.slice(8,12));
+      const timeHigh = BigInt('0x' + hex.slice(12,16)) & 0x0FFFn;
+      const ts = (timeHigh << 48n) | (timeMid << 32n) | timeLow;
+      const unixMs = Number((ts - uuidEpoch) * 100n / 1000000n);
+      extra = [
+        { key: 'Timestamp (UTC)', value: new Date(unixMs).toISOString() },
+        { key: 'Timestamp (Unix ms)', value: unixMs.toString() },
+        { key: 'Node ID', value: bytes.slice(10).map(b=>b.toString(16).padStart(2,'0')).join(':') },
+        { key: 'Clock Sequence', value: ((bytes[8] & 0x3F) << 8 | bytes[9]).toString() },
+      ];
+    }
+
+    if (version === 7) {
+      const msHigh = BigInt('0x' + hex.slice(0,8));
+      const msLow = BigInt('0x' + hex.slice(8,12));
+      const ms = Number((msHigh << 16n) | msLow);
+      extra = [
+        { key: 'Timestamp (UTC)', value: new Date(ms).toISOString() },
+        { key: 'Timestamp (Unix ms)', value: ms.toString() },
+        { key: 'Random bits', value: '74 bits of random data after timestamp' },
+      ];
+    }
+
+    return { uuid: clean, hex, bytes, version, sections, extra, variantBits };
+  }
+
+  // ============================================================
+  // Render
+  // ============================================================
+
+  const SECTION_COLORS = [
+    { bg: '#dbeafe', border: '#93c5fd', text: '#1d4ed8' },
+    { bg: '#dcfce7', border: '#86efac', text: '#15803d' },
+    { bg: '#fef9c3', border: '#fde047', text: '#854d0e' },
+    { bg: '#fce7f3', border: '#f9a8d4', text: '#9d174d' },
+    { bg: '#ede9fe', border: '#c4b5fd', text: '#6d28d9' },
+  ];
+
+  function renderDecoded(result) {
+    if (!result) return `
+      <div class="feature-card" style="border-color:#fecaca;background:#fff5f5;">
+        <strong style="color:var(--color-error);">Invalid UUID</strong>
+        <p class="body-md" style="color:var(--color-body);margin:var(--spacing-xs) 0 0;">Could not parse — check the format is <code class="code-text">xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</code></p>
+      </div>`;
+
+    const { uuid, sections, extra, version } = result;
+    const versionNames = {1:'Time-based',3:'MD5 Name-based',4:'Random',5:'SHA-1 Name-based',7:'Unix Epoch'};
+
+    // We'll render as monospace with color-coded section rows
+    const sectionRows = sections.map((s, i) => {
+      const c = SECTION_COLORS[i % SECTION_COLORS.length];
+      return `
+        <tr>
+          <td style="padding:8px 12px;border-bottom:1px solid var(--color-hairline);">
+            <span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:${c.bg};border:1px solid ${c.border};vertical-align:middle;margin-right:6px;"></span>
+            <code class="code-text" style="font-size:12px;">${s.label}</code>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid var(--color-hairline);"><code class="code-text">${s.value}</code></td>
+          <td style="padding:8px 12px;border-bottom:1px solid var(--color-hairline);color:var(--color-body);" class="body-sm">${s.desc}</td>
+          <td style="padding:8px 12px;border-bottom:1px solid var(--color-hairline);color:var(--color-mute);" class="body-sm">${s.bits} bits</td>
+        </tr>`;
+    }).join('');
+
+    const extraRows = extra.map(e => `
+      <tr>
+        <td style="padding:8px 12px;color:var(--color-body);border-bottom:1px solid var(--color-hairline);white-space:nowrap;" class="body-md">${e.key}</td>
+        <td style="padding:8px 12px;font-family:var(--font-mono);font-size:13px;border-bottom:1px solid var(--color-hairline);">${e.value}</td>
+      </tr>
+    `).join('');
+
+    return `
+      <div class="fade-slide-in" style="display:flex;flex-direction:column;gap:var(--spacing-md);">
+
+        <!-- UUID Display with badges -->
+        <div class="feature-card" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--spacing-xs);">
+          <code style="font-family:var(--font-mono);font-size:15px;word-break:break-all;">${uuid}</code>
+          <div style="display:flex;gap:6px;">
+            <span style="background:var(--color-hairline-soft);border:1px solid var(--color-hairline);border-radius:var(--radius-sm);padding:2px 8px;font-size:12px;font-weight:500;">v${version}</span>
+            <span style="background:var(--color-hairline-soft);border:1px solid var(--color-hairline);border-radius:var(--radius-sm);padding:2px 8px;font-size:12px;font-weight:500;">${versionNames[version] ?? 'Unknown'}</span>
+          </div>
+        </div>
+
+        <!-- Field breakdown -->
+        <div class="feature-card" style="padding:0;overflow:hidden;">
+          <div style="padding:var(--spacing-md) var(--spacing-lg);border-bottom:1px solid var(--color-hairline);">
+            <div class="heading-md">Field Breakdown</div>
+          </div>
+          <div style="overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;">
+              <thead>
+                <tr style="background:var(--color-canvas);">
+                  <th style="padding:8px 12px;text-align:left;font-size:11px;font-weight:500;color:var(--color-mute);border-bottom:1px solid var(--color-hairline);white-space:nowrap;">Field</th>
+                  <th style="padding:8px 12px;text-align:left;font-size:11px;font-weight:500;color:var(--color-mute);border-bottom:1px solid var(--color-hairline);">Hex Value</th>
+                  <th style="padding:8px 12px;text-align:left;font-size:11px;font-weight:500;color:var(--color-mute);border-bottom:1px solid var(--color-hairline);">Description</th>
+                  <th style="padding:8px 12px;text-align:left;font-size:11px;font-weight:500;color:var(--color-mute);border-bottom:1px solid var(--color-hairline);">Size</th>
+                </tr>
+              </thead>
+              <tbody>${sectionRows}</tbody>
+            </table>
+          </div>
+        </div>
+
+        ${extra.length ? `
+        <!-- Decoded metadata -->
+        <div class="feature-card" style="padding:0;overflow:hidden;">
+          <div style="padding:var(--spacing-md) var(--spacing-lg);border-bottom:1px solid var(--color-hairline);">
+            <div class="heading-md">Decoded Metadata</div>
+          </div>
+          <table style="width:100%;border-collapse:collapse;">
+            <tbody>${extraRows}</tbody>
+          </table>
+        </div>
+        ` : ''}
+
+        <!-- Byte values -->
+        <div class="feature-card">
+          <div class="heading-md" style="margin-bottom:var(--spacing-sm);">Byte Values</div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;">
+            ${result.bytes.map((b, i) => `
+              <div style="text-align:center;">
+                <div style="font-family:var(--font-mono);font-size:11px;background:var(--color-canvas);border:1px solid var(--color-hairline);border-radius:4px;padding:3px 5px;color:var(--color-ink);">${b.toString(16).padStart(2,'0')}</div>
+                <div style="font-size:9px;color:var(--color-faint);margin-top:1px;">${i}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // ============================================================
+  // Events
+  // ============================================================
+  function doDecode() {
+    const input = (document.getElementById('decode-input')).value;
+    const result = decodeUUID(input);
+    document.getElementById('decode-output').innerHTML = renderDecoded(result);
+  }
+
+  document.getElementById('decode-btn')?.addEventListener('click', doDecode);
+  document.getElementById('decode-input')?.addEventListener('keydown', (e) => { if(e.key==='Enter') doDecode(); });
+  document.getElementById('decode-input')?.addEventListener('paste', () => setTimeout(doDecode, 50));
+
+  document.querySelectorAll('.decode-example').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const uuid = btn.getAttribute('data-uuid') ?? '';
+      (document.getElementById('decode-input')).value = uuid;
+      doDecode();
+    });
+  });
+</script>

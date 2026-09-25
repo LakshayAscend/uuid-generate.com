@@ -1,0 +1,301 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+  title="Bulk UUID Generator"
+  description="Generate thousands of UUIDs in bulk. Export as TXT, JSON, CSV, or SQL. Supports UUID v1, v4, and v7."
+  canonical="https://uuid-generator.com/bulk"
+>
+  <!-- Header -->
+  <section style="padding:var(--spacing-4xl) 0 var(--spacing-xl);border-bottom:1px solid var(--color-hairline);">
+    <div class="container">
+      <div class="mono-eyebrow" style="color:var(--color-mute);margin-bottom:var(--spacing-sm);">Tool</div>
+      <h1 class="heading-lg" style="margin:0 0 var(--spacing-xs);">Bulk UUID Generator</h1>
+      <p class="body-lg" style="color:var(--color-body);margin:0;">Generate up to 10,000 UUIDs at once and export them in the format you need.</p>
+    </div>
+  </section>
+
+  <!-- Controls -->
+  <section class="container section-band">
+    <div class="feature-card-elevated" style="margin-bottom:var(--spacing-xl);">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:var(--spacing-md);">
+
+        <!-- Count -->
+        <div>
+          <label for="bulk-count" class="label-sm" style="display:block;margin-bottom:6px;color:var(--color-body);">Count</label>
+          <input type="number" id="bulk-count" class="text-input" value="10" min="1" max="10000" />
+        </div>
+
+        <!-- Version -->
+        <div>
+          <label for="bulk-version" class="label-sm" style="display:block;margin-bottom:6px;color:var(--color-body);">UUID Version</label>
+          <select id="bulk-version" class="text-input" style="cursor:pointer;">
+            <option value="4" selected>v4 — Random</option>
+            <option value="1">v1 — Time-based</option>
+            <option value="7">v7 — Unix Epoch</option>
+          </select>
+        </div>
+
+        <!-- Format -->
+        <div>
+          <label for="bulk-format-sel" class="label-sm" style="display:block;margin-bottom:6px;color:var(--color-body);">Format</label>
+          <select id="bulk-format-sel" class="text-input" style="cursor:pointer;">
+            <option value="standard">Standard (lowercase, hyphens)</option>
+            <option value="uppercase">UPPERCASE</option>
+            <option value="no-hyphens">No hyphens</option>
+            <option value="braces">Enclosed in braces &#123;...&#125;</option>
+            <option value="urn">URN prefix</option>
+          </select>
+        </div>
+
+        <!-- Export Format -->
+        <div>
+          <label for="export-format" class="label-sm" style="display:block;margin-bottom:6px;color:var(--color-body);">Export As</label>
+          <select id="export-format" class="text-input" style="cursor:pointer;">
+            <option value="txt">Plain text (.txt)</option>
+            <option value="json">JSON array (.json)</option>
+            <option value="csv">CSV (.csv)</option>
+            <option value="sql">SQL INSERT (.sql)</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="margin-top:var(--spacing-lg);display:flex;flex-wrap:wrap;gap:var(--spacing-xs);align-items:center;">
+        <button id="bulk-generate-btn" class="btn-primary-pill">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M2 8a6 6 0 1 1 6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M2 5v3h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Generate
+        </button>
+        <button id="bulk-copy-btn" class="btn-ghost" disabled>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <rect x="4" y="4" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
+            <path d="M2 10V2h8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
+          Copy All
+        </button>
+        <button id="bulk-download-btn" class="btn-ghost" disabled>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M7 2v7M4 6l3 3 3-3M2 11h10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Download
+        </button>
+        <span id="bulk-stats" class="body-sm" style="color:var(--color-mute);"></span>
+      </div>
+    </div>
+
+    <!-- Progress bar -->
+    <div id="progress-wrapper" class="hidden" style="margin-bottom:var(--spacing-md);">
+      <div style="height:2px;background:var(--color-hairline);border-radius:1px;overflow:hidden;">
+        <div id="progress-bar" style="height:100%;width:0%;background:var(--color-ink);transition:width 0.15s ease;"></div>
+      </div>
+      <div class="body-sm" style="color:var(--color-mute);margin-top:4px;" id="progress-label">Generating...</div>
+    </div>
+
+    <!-- Results -->
+    <div id="bulk-results-container" class="hidden">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--spacing-sm);">
+        <div class="label-sm" id="bulk-results-header"></div>
+        <input type="text" id="bulk-search" class="text-input" placeholder="Filter UUIDs..." style="max-width:220px;" />
+      </div>
+
+      <div style="border:1px solid var(--color-hairline);border-radius:var(--radius-md);overflow:hidden;max-height:520px;overflow-y:auto;" id="uuid-list-wrapper">
+        <div id="uuid-list"></div>
+      </div>
+    </div>
+
+    <!-- SQL Table Name (shown when sql is selected) -->
+    <div id="sql-options" class="hidden feature-card" style="margin-top:var(--spacing-md);">
+      <label for="sql-table" class="label-sm" style="display:block;margin-bottom:6px;color:var(--color-body);">SQL Table Name</label>
+      <input type="text" id="sql-table" class="text-input" value="uuids" style="max-width:280px;" />
+      <label for="sql-column" class="label-sm" style="display:block;margin-top:var(--spacing-sm);margin-bottom:6px;color:var(--color-body);">Column Name</label>
+      <input type="text" id="sql-column" class="text-input" value="id" style="max-width:280px;" />
+    </div>
+  </section>
+</Layout>
+
+<script>
+  // ============================================================
+  // UUID generators (same as index.astro)
+  // ============================================================
+  function generateV4() {
+    const b = crypto.getRandomValues(new Uint8Array(16));
+    b[6] = (b[6] & 0x0f) | 0x40;
+    b[8] = (b[8] & 0x3f) | 0x80;
+    const h = Array.from(b).map(x => x.toString(16).padStart(2,'0')).join('');
+    return `${h.slice(0,8)}-${h.slice(8,12)}-${h.slice(12,16)}-${h.slice(16,20)}-${h.slice(20)}`;
+  }
+
+  function generateV1() {
+    const now = Date.now();
+    const uuidEpoch = 122192928000000000n;
+    const timeMs = BigInt(now) * 10000n + uuidEpoch;
+    const timeLow = (timeMs & 0xFFFFFFFFn).toString(16).padStart(8, '0');
+    const timeMid = ((timeMs >> 32n) & 0xFFFFn).toString(16).padStart(4, '0');
+    const timeHigh = (((timeMs >> 48n) & 0x0FFFn) | 0x1000n).toString(16).padStart(4, '0');
+    const clockSeq = (Math.floor(Math.random() * 0x3FFF) | 0x8000).toString(16).padStart(4, '0');
+    const node = Array.from(crypto.getRandomValues(new Uint8Array(6))).map(b => b.toString(16).padStart(2,'0')).join('');
+    return `${timeLow}-${timeMid}-${timeHigh}-${clockSeq}-${node}`;
+  }
+
+  function generateV7() {
+    const b = crypto.getRandomValues(new Uint8Array(16));
+    const ms = Date.now();
+    b[0]=(ms/2**40)&0xFF;b[1]=(ms/2**32)&0xFF;b[2]=(ms/2**24)&0xFF;
+    b[3]=(ms/2**16)&0xFF;b[4]=(ms/2**8)&0xFF;b[5]=ms&0xFF;
+    b[6]=(b[6]&0x0f)|0x70;b[8]=(b[8]&0x3f)|0x80;
+    const h=Array.from(b).map(x=>x.toString(16).padStart(2,'0')).join('');
+    return `${h.slice(0,8)}-${h.slice(8,12)}-${h.slice(12,16)}-${h.slice(16,20)}-${h.slice(20)}`;
+  }
+
+  function applyBulkFormat(uuid, fmt) {
+    switch(fmt) {
+      case 'uppercase': return uuid.toUpperCase();
+      case 'no-hyphens': return uuid.replace(/-/g,'');
+      case 'braces': return `{${uuid}}`;
+      case 'urn': return `urn:uuid:${uuid}`;
+      default: return uuid;
+    }
+  }
+
+  // ============================================================
+  // State
+  // ============================================================
+  let generatedUUIDs = [];
+  let filteredUUIDs = [];
+
+  // ============================================================
+  // Render list (virtualized for large sets)
+  // ============================================================
+  function renderList(uuids, limit = 500) {
+    const list = document.getElementById('uuid-list');
+    if (!list) return;
+    const shown = uuids.slice(0, limit);
+    list.innerHTML = shown.map((uuid, i) => `
+      <div class="uuid-list-item" id="uuid-row-${i}">
+        <span class="uuid-value">${uuid}</span>
+        <button
+          class="btn-ghost"
+          style="padding:3px 8px;font-size:11px;flex-shrink:0;"
+          onclick="navigator.clipboard.writeText('${uuid}').then(()=>window.showToast?.('Copied!','✓'))"
+        >Copy</button>
+      </div>
+    `).join('');
+    if (uuids.length > limit) {
+      list.innerHTML += `<div class="uuid-list-item" style="justify-content:center;color:var(--color-mute);">
+        + ${(uuids.length - limit).toLocaleString()} more (download to see all)
+      </div>`;
+    }
+  }
+
+  // ============================================================
+  // Export helpers
+  // ============================================================
+  function buildExportContent(uuids, format, table, column) {
+    switch(format) {
+      case 'json': return JSON.stringify(uuids, null, 2);
+      case 'csv': return `uuid\n${uuids.join('\n')}`;
+      case 'sql': {
+        const rows = uuids.map(u => `  ('${u}')`).join(',\n');
+        return `INSERT INTO ${table} (${column}) VALUES\n${rows};`;
+      }
+      default: return uuids.join('\n');
+    }
+  }
+
+  function downloadFile(content, filename, mime) {
+    const blob = new Blob([content], { type: mime });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  // ============================================================
+  // Generate
+  // ============================================================
+  async function bulkGenerate() {
+    const count = Math.min(10000, Math.max(1, parseInt((document.getElementById('bulk-count')).value) || 10));
+    const version = (document.getElementById('bulk-version')).value;
+    const fmt = (document.getElementById('bulk-format-sel')).value;
+
+    // Show progress
+    const progressWrapper = document.getElementById('progress-wrapper');
+    const progressBar = document.getElementById('progress-bar');
+    const progressLabel = document.getElementById('progress-label');
+    progressWrapper?.classList.remove('hidden');
+
+    const CHUNK = 200;
+    const uuids = [];
+    const gen = version === '1' ? generateV1 : version === '7' ? generateV7 : generateV4;
+
+    for (let i = 0; i < count; i += CHUNK) {
+      const end = Math.min(i + CHUNK, count);
+      for (let j = i; j < end; j++) {
+        uuids.push(applyBulkFormat(gen(), fmt));
+      }
+      const pct = Math.round((end / count) * 100);
+      if (progressBar) progressBar.style.width = `${pct}%`;
+      if (progressLabel) progressLabel.textContent = `Generating... ${end.toLocaleString()} / ${count.toLocaleString()}`;
+      // Yield to browser
+      if (i + CHUNK < count) await new Promise(r => setTimeout(r, 0));
+    }
+
+    generatedUUIDs = uuids;
+    filteredUUIDs = [...uuids];
+
+    progressWrapper?.classList.add('hidden');
+
+    const container = document.getElementById('bulk-results-container');
+    container?.classList.remove('hidden');
+
+    const header = document.getElementById('bulk-results-header');
+    if (header) header.textContent = `${count.toLocaleString()} UUIDs generated (v${version})`;
+
+    const stats = document.getElementById('bulk-stats');
+    if (stats) stats.textContent = `${count.toLocaleString()} UUIDs`;
+
+    renderList(uuids);
+
+    const copyBtn = document.getElementById('bulk-copy-btn');
+    const dlBtn = document.getElementById('bulk-download-btn');
+    if (copyBtn) (copyBtn as HTMLButtonElement).disabled = false;
+    if (dlBtn) (dlBtn as HTMLButtonElement).disabled = false;
+  }
+
+  document.getElementById('bulk-generate-btn')?.addEventListener('click', bulkGenerate);
+
+  document.getElementById('bulk-copy-btn')?.addEventListener('click', () => {
+    const content = generatedUUIDs.join('\n');
+    navigator.clipboard.writeText(content).then(() => {
+      window.showToast?.(`${generatedUUIDs.length.toLocaleString()} UUIDs copied!`, '✓');
+    });
+  });
+
+  document.getElementById('bulk-download-btn')?.addEventListener('click', () => {
+    const expFmt = (document.getElementById('export-format')).value;
+    const table = (document.getElementById('sql-table')).value || 'uuids';
+    const column = (document.getElementById('sql-column')).value || 'id';
+    const content = buildExportContent(generatedUUIDs, expFmt, table, column);
+    const mimes = { txt:'text/plain', json:'application/json', csv:'text/csv', sql:'text/plain' };
+    downloadFile(content, `uuids.${expFmt}`, mimes[expFmt] || 'text/plain');
+    window.showToast?.(`Downloaded uuids.${expFmt}`, '↓');
+  });
+
+  // SQL options visibility
+  document.getElementById('export-format')?.addEventListener('change', (e) => {
+    const sqlOpts = document.getElementById('sql-options');
+    sqlOpts?.classList.toggle('hidden', (e.target).value !== 'sql');
+  });
+
+  // Search / filter
+  document.getElementById('bulk-search')?.addEventListener('input', (e) => {
+    const q = (e.target).value.toLowerCase();
+    filteredUUIDs = q ? generatedUUIDs.filter(u => u.includes(q)) : [...generatedUUIDs];
+    renderList(filteredUUIDs);
+  });
+</script>

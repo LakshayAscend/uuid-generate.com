@@ -1,23 +1,247 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+  canonical?: string;
+  ogTitle?: string;
+}
+
+const {
+  title,
+  description = "Free online UUID generator — generate UUID v1, v3, v4, v5, and v7 instantly. Validate, decode, and export UUIDs in multiple formats. Developer-friendly, no ads.",
+  canonical = "https://uuid-generator.com",
+  ogTitle,
+} = Astro.props;
+
+const fullTitle = title === "UUID Generator" ? title : `${title} — UUID Generator`;
+---
+
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
-	</head>
-	<body>
-		<slot />
-	</body>
-</html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>
+    <!-- Primary Meta -->
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={ogTitle ?? fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:site_name" content="UUID Generator" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={ogTitle ?? fullTitle} />
+    <meta name="twitter:description" content={description} />
+
+    <!-- Robots -->
+    <meta name="robots" content="index, follow" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Fonts: Geist Sans + Geist Mono from Google Fonts (CDN) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Schema.org structured data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "UUID Generator",
+        "url": "https://uuid-generator.com",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Any",
+        "description": "Free online UUID generator supporting v1, v3, v4, v5, and v7. Validate, decode, format, and export UUIDs.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <!-- Navigation -->
+    <header class="nav-bar sticky top-0 z-50">
+      <div class="container flex items-center justify-between h-12">
+        <!-- Wordmark -->
+        <a href="/" id="nav-logo" class="flex items-center gap-2 no-underline" aria-label="UUID Generator Home">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect x="1" y="1" width="8" height="8" rx="2" fill="#171717"/>
+            <rect x="11" y="1" width="8" height="8" rx="2" fill="#171717" opacity="0.4"/>
+            <rect x="1" y="11" width="8" height="8" rx="2" fill="#171717" opacity="0.4"/>
+            <rect x="11" y="11" width="8" height="8" rx="2" fill="#171717" opacity="0.7"/>
+          </svg>
+          <span style="font-size:15px;font-weight:600;color:var(--color-ink);letter-spacing:-0.3px;">uuid-generator</span>
+          <span class="mono-eyebrow" style="color:var(--color-mute);margin-left:2px;">.com</span>
+        </a>
+
+        <!-- Nav Links -->
+        <nav class="hidden md:flex items-center gap-1" aria-label="Main navigation">
+          <a href="/" id="nav-generate" class="nav-link">Generate</a>
+          <a href="/validate" id="nav-validate" class="nav-link">Validate</a>
+          <a href="/bulk" id="nav-bulk" class="nav-link">Bulk Export</a>
+          <a href="/decode" id="nav-decode" class="nav-link">Decode</a>
+          <a href="/about" id="nav-about" class="nav-link">About</a>
+        </nav>
+
+        <!-- Actions -->
+        <div class="flex items-center gap-2">
+          <button id="nav-copy-btn" class="btn-ghost hidden md:flex" onclick="window.quickCopy && window.quickCopy()" title="Quick copy UUID (Ctrl+C)">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <rect x="4" y="4" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
+              <path d="M2 10V2h8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+            Copy UUID
+          </button>
+
+          <!-- Mobile menu toggle -->
+          <button id="mobile-menu-btn" class="btn-ghost md:hidden" aria-label="Open menu" aria-expanded="false">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden" style="background:var(--color-canvas-elevated);border-bottom:1px solid var(--color-hairline);">
+      <nav class="container flex flex-col gap-1 py-3" aria-label="Mobile navigation">
+        <a href="/" class="nav-link block">Generate</a>
+        <a href="/validate" class="nav-link block">Validate</a>
+        <a href="/bulk" class="nav-link block">Bulk Export</a>
+        <a href="/decode" class="nav-link block">Decode</a>
+        <a href="/about" class="nav-link block">About</a>
+      </nav>
+    </div>
+
+    <!-- Page Content -->
+    <main id="main-content">
+      <slot />
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:var(--spacing-xl);">
+          <div>
+            <div style="font-weight:600;color:var(--color-ink);margin-bottom:var(--spacing-sm);">UUID Generator</div>
+            <p style="color:var(--color-mute);font-size:13px;line-height:1.5;margin:0;">
+              Fast, free, developer-friendly UUID generation. No ads. No tracking.
+            </p>
+          </div>
+          <div>
+            <div class="mono-eyebrow" style="color:var(--color-mute);margin-bottom:var(--spacing-sm);">Tools</div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <a href="/" class="nav-link" style="padding:2px 6px;">UUID v4 Generator</a>
+              <a href="/validate" class="nav-link" style="padding:2px 6px;">UUID Validator</a>
+              <a href="/bulk" class="nav-link" style="padding:2px 6px;">Bulk Generator</a>
+              <a href="/decode" class="nav-link" style="padding:2px 6px;">UUID Decoder</a>
+            </div>
+          </div>
+          <div>
+            <div class="mono-eyebrow" style="color:var(--color-mute);margin-bottom:var(--spacing-sm);">Versions</div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <a href="/?v=1" class="nav-link" style="padding:2px 6px;">UUID v1 (time-based)</a>
+              <a href="/?v=4" class="nav-link" style="padding:2px 6px;">UUID v4 (random)</a>
+              <a href="/?v=7" class="nav-link" style="padding:2px 6px;">UUID v7 (Unix epoch)</a>
+            </div>
+          </div>
+          <div>
+            <div class="mono-eyebrow" style="color:var(--color-mute);margin-bottom:var(--spacing-sm);">Resources</div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <a href="/about" class="nav-link" style="padding:2px 6px;">About UUIDs</a>
+              <a href="/about#rfc4122" class="nav-link" style="padding:2px 6px;">RFC 4122</a>
+              <a href="/about#faq" class="nav-link" style="padding:2px 6px;">FAQ</a>
+            </div>
+          </div>
+        </div>
+        <div style="border-top:1px solid var(--color-hairline);margin-top:var(--spacing-xl);padding-top:var(--spacing-md);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+          <span style="color:var(--color-mute);font-size:12px;">© 2025 uuid-generator.com — Free to use. No ads.</span>
+          <span style="color:var(--color-faint);font-size:12px;">RFC 4122 compliant</span>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Toast container -->
+    <div id="toast-container" aria-live="polite" aria-label="Notifications"></div>
+
+    <!-- Global scripts -->
+    <script>
+      // Mobile menu
+      const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      mobileMenuBtn?.addEventListener('click', () => {
+        const isOpen = mobileMenu?.classList.contains('hidden') === false;
+        mobileMenu?.classList.toggle('hidden');
+        mobileMenuBtn.setAttribute('aria-expanded', String(!isOpen));
+      });
+
+      // Highlight active nav link
+      const path = window.location.pathname;
+      document.querySelectorAll('.nav-link[href]').forEach(link => {
+        const href = (link as HTMLAnchorElement).getAttribute('href') ?? '';
+        if (href === path || (path === '/' && href === '/') || (path !== '/' && href !== '/' && path.startsWith(href))) {
+          link.classList.add('active');
+        }
+      });
+
+      // Global toast system
+      function showToast(message: string, icon = '✓') {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.innerHTML = `<span>${icon}</span><span>${message}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => {
+          toast.classList.add('toast-exit');
+          setTimeout(() => toast.remove(), 220);
+        }, 2200);
+      }
+      (window as any).showToast = showToast;
+
+      // Global copy UUID from nav button (uses global lastUUID set by page)
+      function quickCopy() {
+        const uuid = (window as any).lastUUID;
+        if (uuid) {
+          navigator.clipboard.writeText(uuid).then(() => {
+            (window as any).showToast('UUID copied!');
+          });
+        }
+      }
+      (window as any).quickCopy = quickCopy;
+
+      // Keyboard shortcuts
+      document.addEventListener('keydown', (e) => {
+        // Ctrl/Cmd + G = Generate new UUID
+        if ((e.ctrlKey || e.metaKey) && e.key === 'g') {
+          e.preventDefault();
+          const generateBtn = document.getElementById('generate-btn') as HTMLButtonElement;
+          generateBtn?.click();
+        }
+        // Ctrl/Cmd + Shift + C = Copy UUID
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'C') {
+          e.preventDefault();
+          const copyBtn = document.getElementById('copy-uuid-btn') as HTMLButtonElement;
+          copyBtn?.click();
+        }
+      });
+    </script>
+  </body>
+</html>

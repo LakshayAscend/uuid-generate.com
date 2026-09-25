@@ -1,0 +1,305 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+  title="UUID Validator & Decoder"
+  description="Validate any UUID and decode its version, timestamp, variant, and structure. Supports UUID v1, v3, v4, v5, and v7."
+  canonical="https://uuid-generator.com/validate"
+>
+  <!-- Page Header -->
+  <section style="padding:var(--spacing-4xl) 0 var(--spacing-xl);border-bottom:1px solid var(--color-hairline);">
+    <div class="container">
+      <div class="mono-eyebrow" style="color:var(--color-mute);margin-bottom:var(--spacing-sm);">Tool</div>
+      <h1 class="heading-lg" style="margin:0 0 var(--spacing-xs);">UUID Validator & Decoder</h1>
+      <p class="body-lg" style="color:var(--color-body);margin:0;">Paste any UUID to check if it's valid, identify its version, and decode embedded metadata.</p>
+    </div>
+  </section>
+
+  <!-- Validator Tool -->
+  <section class="container section-band">
+    <div class="feature-card-elevated" style="max-width:720px;margin:0 auto;">
+
+      <label for="uuid-input-field" class="label-sm" style="display:block;margin-bottom:var(--spacing-xs);color:var(--color-body);">UUID to validate</label>
+      <div style="display:flex;gap:var(--spacing-xs);margin-bottom:var(--spacing-md);">
+        <input
+          type="text"
+          id="uuid-input-field"
+          class="text-input"
+          placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+          spellcheck="false"
+          autocomplete="off"
+          autofocus
+        />
+        <button id="validate-btn" class="btn-primary" style="flex-shrink:0;">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.2"/>
+            <path d="M4.5 7l2 2 3-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Validate
+        </button>
+        <button id="paste-btn" class="btn-ghost" style="flex-shrink:0;" title="Paste from clipboard">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <rect x="3" y="2" width="8" height="10" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
+            <path d="M5 2V1h4v1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
+          Paste
+        </button>
+      </div>
+
+      <!-- Result area -->
+      <div id="validation-result"></div>
+
+      <!-- Quick examples -->
+      <div style="margin-top:var(--spacing-lg);padding-top:var(--spacing-md);border-top:1px solid var(--color-hairline);">
+        <div class="mono-eyebrow" style="color:var(--color-mute);margin-bottom:var(--spacing-xs);">Try an example</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          <button class="btn-ghost example-btn" data-uuid="550e8400-e29b-41d4-a716-446655440000" id="example-v4">v4 example</button>
+          <button class="btn-ghost example-btn" data-uuid="6ba7b810-9dad-11d1-80b4-00c04fd430c8" id="example-v1">v1 example</button>
+          <button class="btn-ghost example-btn" data-uuid="018f3b6a-c000-7000-8000-000000000000" id="example-v7">v7 example</button>
+          <button class="btn-ghost example-btn" data-uuid="not-a-valid-uuid" id="example-invalid">invalid UUID</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Batch Validation -->
+    <div style="max-width:720px;margin:var(--spacing-xl) auto 0;">
+      <div class="feature-card">
+        <div class="heading-md" style="margin-bottom:var(--spacing-xs);">Batch Validate</div>
+        <p class="body-md" style="color:var(--color-body);margin-bottom:var(--spacing-md);">Paste multiple UUIDs (one per line) to validate them all at once.</p>
+        <textarea
+          id="batch-input"
+          class="text-input"
+          style="height:140px;resize:vertical;font-family:var(--font-mono);font-size:13px;"
+          placeholder="550e8400-e29b-41d4-a716-446655440000&#10;018f3b6a-c000-7000-8000-000000000000&#10;..."
+        ></textarea>
+        <div style="margin-top:var(--spacing-sm);display:flex;gap:var(--spacing-xs);">
+          <button id="batch-validate-btn" class="btn-primary">Validate All</button>
+          <button id="batch-clear-btn" class="btn-ghost">Clear</button>
+        </div>
+        <div id="batch-results" style="margin-top:var(--spacing-md);"></div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  // ============================================================
+  // UUID Validation & Decoding
+  // ============================================================
+
+  const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-7][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+  function parseUUID(uuid) {
+    const clean = uuid.trim()
+      .toLowerCase()
+      .replace(/^urn:uuid:/i, '')
+      .replace(/^\{|\}$/g, '');
+
+    const isValid = UUID_REGEX.test(clean);
+    if (!isValid) return { valid: false, raw: uuid };
+
+    const hex = clean.replace(/-/g, '');
+    const bytes = Array.from({ length: 16 }, (_, i) => parseInt(hex.slice(i*2, i*2+2), 16));
+
+    const version = (bytes[6] >> 4) & 0xF;
+    const variantBits = (bytes[8] >> 6) & 0x3;
+    const variant = variantBits >= 2 ? 'RFC 4122' : variantBits === 0 ? 'NCS backward compat' : 'Microsoft';
+
+    let decoded = {};
+
+    if (version === 1) {
+      // Reconstruct 60-bit timestamp
+      const timeLow = BigInt('0x' + hex.slice(0, 8));
+      const timeMid = BigInt('0x' + hex.slice(8, 12));
+      const timeHigh = BigInt('0x' + hex.slice(12, 16)) & 0x0FFFn;
+      const timestamp = (timeHigh << 48n) | (timeMid << 32n) | timeLow;
+      const uuidEpoch = 122192928000000000n;
+      const unixNs = (timestamp - uuidEpoch) * 100n;
+      const unixMs = Number(unixNs / 1000000n);
+      const date = new Date(unixMs);
+      decoded.timestamp = date.toISOString();
+      decoded.node = bytes.slice(10).map(b => b.toString(16).padStart(2,'0')).join(':');
+      decoded.clockSeq = ((bytes[8] & 0x3f) << 8 | bytes[9]).toString();
+    }
+
+    if (version === 7) {
+      const msHigh = BigInt('0x' + hex.slice(0, 8));
+      const msLow = BigInt('0x' + hex.slice(8, 12));
+      const ms = Number((msHigh << 16n) | msLow);
+      decoded.timestamp = new Date(ms).toISOString();
+      decoded.milliseconds = ms;
+    }
+
+    return {
+      valid: true,
+      uuid: clean,
+      version,
+      variant,
+      decoded,
+    };
+  }
+
+  function renderResult(result) {
+    if (!result.valid) {
+      return `
+        <div class="validator-result invalid fade-slide-in">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:var(--spacing-sm);">
+            <div style="width:20px;height:20px;border-radius:50%;background:#fee2e2;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 2l6 6M8 2L2 8" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <strong style="color:#dc2626;">Invalid UUID</strong>
+          </div>
+          <p class="body-md" style="color:var(--color-body);margin:0;">
+            "${result.raw}" does not conform to RFC 4122 UUID format.
+          </p>
+          <p class="body-sm" style="color:var(--color-mute);margin-top:6px;">
+            Expected format: <code class="code-text">xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx</code> where M is the version (1–7) and N is the variant (8, 9, a, or b).
+          </p>
+        </div>
+      `;
+    }
+
+    const { uuid, version, variant, decoded } = result;
+    const versionNames = { 1:'Time-based', 2:'DCE Security', 3:'MD5 Name-based', 4:'Random', 5:'SHA-1 Name-based', 7:'Unix Epoch' };
+
+    let decodedRows = '';
+    if (decoded.timestamp) {
+      decodedRows += `
+        <tr>
+          <td style="padding:8px 12px;color:var(--color-body);border-bottom:1px solid var(--color-hairline);white-space:nowrap;">Embedded Timestamp</td>
+          <td style="padding:8px 12px;font-family:var(--font-mono);font-size:13px;border-bottom:1px solid var(--color-hairline);">${decoded.timestamp}</td>
+        </tr>`;
+    }
+    if (decoded.node) {
+      decodedRows += `
+        <tr>
+          <td style="padding:8px 12px;color:var(--color-body);border-bottom:1px solid var(--color-hairline);white-space:nowrap;">Node (MAC)</td>
+          <td style="padding:8px 12px;font-family:var(--font-mono);font-size:13px;border-bottom:1px solid var(--color-hairline);">${decoded.node}</td>
+        </tr>`;
+    }
+    if (decoded.clockSeq) {
+      decodedRows += `
+        <tr>
+          <td style="padding:8px 12px;color:var(--color-body);white-space:nowrap;">Clock Sequence</td>
+          <td style="padding:8px 12px;font-family:var(--font-mono);font-size:13px;">${decoded.clockSeq}</td>
+        </tr>`;
+    }
+
+    return `
+      <div class="validator-result valid fade-slide-in">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:var(--spacing-md);">
+          <div style="width:20px;height:20px;border-radius:50%;background:#dcfce7;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.5l2.5 2.5 4-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <strong style="color:#16a34a;">Valid UUID</strong>
+        </div>
+
+        <div style="font-family:var(--font-mono);font-size:15px;color:var(--color-ink);word-break:break-all;margin-bottom:var(--spacing-md);padding:10px 14px;background:var(--color-canvas);border-radius:var(--radius-sm);border:1px solid var(--color-hairline);">${uuid}</div>
+
+        <table style="width:100%;border-collapse:collapse;border:1px solid var(--color-hairline);border-radius:var(--radius-sm);overflow:hidden;">
+          <tr>
+            <td style="padding:8px 12px;color:var(--color-body);border-bottom:1px solid var(--color-hairline);white-space:nowrap;">Version</td>
+            <td style="padding:8px 12px;border-bottom:1px solid var(--color-hairline);">
+              <strong>v${version}</strong>
+              <span class="body-sm" style="color:var(--color-mute);margin-left:6px;">${versionNames[version] ?? 'Unknown'}</span>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:8px 12px;color:var(--color-body);border-bottom:1px solid var(--color-hairline);white-space:nowrap;">Variant</td>
+            <td style="padding:8px 12px;border-bottom:1px solid var(--color-hairline);">${variant}</td>
+          </tr>
+          <tr>
+            <td style="padding:8px 12px;color:var(--color-body);border-bottom:1px solid var(--color-hairline);white-space:nowrap;">Format</td>
+            <td style="padding:8px 12px;font-family:var(--font-mono);font-size:12px;border-bottom:1px solid var(--color-hairline);">
+              ${uuid.replace(/-/g, '')} <span style="color:var(--color-mute)">(no hyphens)</span>
+            </td>
+          </tr>
+          ${decodedRows}
+        </table>
+
+        <div style="margin-top:var(--spacing-sm);display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="btn-ghost" onclick="navigator.clipboard.writeText('${uuid}').then(()=>window.showToast?.('UUID copied!','✓'))">Copy UUID</button>
+          <button class="btn-ghost" onclick="navigator.clipboard.writeText('${uuid.replace(/-/g,'')}').then(()=>window.showToast?.('Copied no-hyphens!','✓'))">Copy (no hyphens)</button>
+          <button class="btn-ghost" onclick="navigator.clipboard.writeText('{${uuid}}').then(()=>window.showToast?.('Copied with braces!','✓'))">Copy {braces}</button>
+        </div>
+      </div>
+    `;
+  }
+
+  // ============================================================
+  // Event Handlers
+  // ============================================================
+
+  function doValidate() {
+    const input = (document.getElementById('uuid-input-field')).value;
+    if (!input.trim()) return;
+    const result = parseUUID(input);
+    document.getElementById('validation-result').innerHTML = renderResult(result);
+  }
+
+  document.getElementById('validate-btn')?.addEventListener('click', doValidate);
+
+  document.getElementById('uuid-input-field')?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') doValidate();
+  });
+
+  // Auto-validate on paste
+  document.getElementById('uuid-input-field')?.addEventListener('paste', () => {
+    setTimeout(doValidate, 50);
+  });
+
+  // Paste from clipboard
+  document.getElementById('paste-btn')?.addEventListener('click', async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      const inputEl = document.getElementById('uuid-input-field');
+      inputEl.value = text.trim();
+      doValidate();
+    } catch {
+      window.showToast?.('Could not access clipboard', '✗');
+    }
+  });
+
+  // Example buttons
+  document.querySelectorAll('.example-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const uuid = btn.getAttribute('data-uuid') ?? '';
+      const inputEl = document.getElementById('uuid-input-field');
+      inputEl.value = uuid;
+      doValidate();
+      inputEl.focus();
+    });
+  });
+
+  // Batch validation
+  document.getElementById('batch-validate-btn')?.addEventListener('click', () => {
+    const lines = (document.getElementById('batch-input')).value.split('\n').filter(l => l.trim());
+    if (!lines.length) return;
+
+    const resultsEl = document.getElementById('batch-results');
+    const results = lines.map(line => ({ line, result: parseUUID(line.trim()) }));
+    const valid = results.filter(r => r.result.valid).length;
+
+    resultsEl.innerHTML = `
+      <div style="margin-bottom:var(--spacing-sm);" class="body-md">
+        <strong>${valid} valid</strong> / ${results.length - valid} invalid (${results.length} total)
+      </div>
+      <div style="border:1px solid var(--color-hairline);border-radius:var(--radius-md);overflow:hidden;">
+        ${results.map(({ line, result }, i) => `
+          <div class="uuid-list-item" style="${i === results.length-1 ? 'border-bottom:none;' : ''}">
+            <span class="uuid-value" style="color:${result.valid ? 'var(--color-ink)' : 'var(--color-error)'};">${line.trim()}</span>
+            <span class="body-sm" style="color:${result.valid ? '#16a34a' : 'var(--color-error)'};flex-shrink:0;">
+              ${result.valid ? `✓ v${result.result.version}` : '✗ invalid'}
+            </span>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  });
+
+  document.getElementById('batch-clear-btn')?.addEventListener('click', () => {
+    (document.getElementById('batch-input')).value = '';
+    document.getElementById('batch-results').innerHTML = '';
+  });
+</script>
