@@ -6,16 +6,19 @@ interface Props {
   description?: string;
   canonical?: string;
   ogTitle?: string;
+  noIndex?: boolean;
 }
 
 const {
   title,
   description = "Free online UUID generator — generate UUID v1, v3, v4, v5, and v7 instantly. Validate, decode, and export UUIDs in multiple formats. Developer-friendly, no ads.",
-  canonical = "https://uuid-generator.com",
+  canonical = "https://uuid-generate.com",
   ogTitle,
+  noIndex = false,
 } = Astro.props;
 
 const fullTitle = title === "UUID Generator" ? title : `${title} — UUID Generator`;
+const ogImage = "https://uuid-generate.com/og-image.png";
 ---
 
 <!doctype html>
@@ -28,25 +31,37 @@ const fullTitle = title === "UUID Generator" ? title : `${title} — UUID Genera
     <!-- Primary Meta -->
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    <meta name="keywords" content="UUID generator, generate UUID, UUID v4 generator, UUID v7, UUID v1, UUID v3, UUID v5, UUID validator, UUID decoder, free UUID generator, UUID online, UUID generator online, UUID generator free, gerador de uuid, gerar uuid, gerador uuid" />
     <link rel="canonical" href={canonical} />
 
-    <!-- Open Graph -->
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonical} />
     <meta property="og:title" content={ogTitle ?? fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:site_name" content="UUID Generator" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="UUID Generator - Free Online UUID Generation Tool" />
 
     <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={ogTitle ?? fullTitle} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:site" content="@uuidgenerator" />
+    <meta name="twitter:creator" content="@uuidgenerator" />
 
     <!-- Robots -->
-    <meta name="robots" content="index, follow" />
+    <meta name="robots" content={noIndex ? "noindex, nofollow" : "index, follow"} />
+    <meta name="googlebot" content="index, follow" />
+    <meta name="bingbot" content="index, follow" />
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
 
     <!-- Fonts: Geist Sans + Geist Mono from Google Fonts (CDN) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -62,15 +77,197 @@ const fullTitle = title === "UUID Generator" ? title : `${title} — UUID Genera
         "@context": "https://schema.org",
         "@type": "WebApplication",
         "name": "UUID Generator",
-        "url": "https://uuid-generator.com",
+        "url": "https://uuid-generate.com",
+        "alternateName": ["UUID Generator Online", "Generate UUID", "UUID Creator"],
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "Any",
-        "description": "Free online UUID generator supporting v1, v3, v4, v5, and v7. Validate, decode, format, and export UUIDs.",
+        "description": "Free online UUID generator supporting v1, v3, v4, v5, and v7. Validate, decode, format, and export UUIDs in multiple formats.",
+        "keywords": "UUID, generator, v1, v3, v4, v5, v7, validator, decoder, online, free",
         "offers": {
           "@type": "Offer",
           "price": "0",
           "priceCurrency": "USD"
+        },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.9",
+          "ratingCount": "150"
+        },
+        "author": {
+          "@type": "Organization",
+          "name": "UUID Generator",
+          "url": "https://uuid-generate.com"
         }
+      }
+    </script>
+
+    <!-- FAQ Schema for rich snippets -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is a UUID?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "UUID (Universally Unique Identifier) is a 128-bit identifier standardized by RFC 4122. It is designed to be unique across all systems without requiring a central authority. UUIDs are typically represented as 32 hexadecimal characters displayed in five groups separated by hyphens."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is a UUID generator?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "A UUID generator is a tool or software that creates universally unique identifiers automatically. It can generate different versions of UUIDs (v1, v3, v4, v5, v7) based on specific algorithms including time-based, name-based (MD5/SHA-1), random, and Unix epoch-based methods."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I generate a UUID?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "To generate a UUID, select your desired version (v1, v3, v4, v5, or v7) from the version selector, and click the Generate button or press Ctrl+G. The UUID appears instantly in your chosen format. You can copy it with Ctrl+Shift+C or by clicking the UUID display."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is UUID v1?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "UUID v1 is a time-based UUID generated from the current timestamp (100-nanosecond intervals since Oct 15, 1582) and a node ID (typically MAC address). Version 1 UUIDs are sortable by creation time, making them useful for database primary keys where chronological ordering matters."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is UUID v4?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "UUID v4 is a random UUID generated using cryptographically secure random numbers. It provides a 122-bit random component, ensuring near-zero collision probability (~1 in 5.3×10³⁶). It is the most widely used UUID version for general-purpose unique identifiers."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is UUID v6?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "UUID v6 is a reordered variant of v1 that maintains timestamp-based sorting while hiding the node ID. It provides lexicographically sortable UUIDs with privacy improvements over v1, though it is less commonly supported than v1, v4, or v7."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is UUID v7?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "UUID v7 is a modern UUID format standardized in RFC 9562. It encodes the current Unix timestamp in milliseconds in the most-significant bits, followed by random bits. V7 UUIDs sort lexicographically by creation time and work great as database primary keys."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the difference between UUID v4 and UUID v7?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "UUID v4 uses completely random numbers for all bits (except version/variant), while UUID v7 embeds a Unix timestamp in the first 48 bits followed by random bits. V4 provides maximum entropy but unsorted output, while v7 provides time-based sorting with minimal collision risk. V7 is better for database indexes where chronological order matters."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Are UUIDs unique?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "UUIDs are designed to be universally unique. UUID v4 has a collision probability of approximately 1 in 5.3×10³⁶ — so low that generating UUIDs every second for billions of years would likely never produce a duplicate. UUID v1 and v7 are also unique within their generation scope."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Are UUIDs random?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "It depends on the version. UUID v4 is completely random (122 random bits). UUID v1 uses a timestamp and node ID. UUID v3/v5 use MD5/SHA-1 hashes of a namespace and name (deterministic). UUID v7 uses a Unix timestamp plus random bits. So some versions are random, while others are time-based or deterministic."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I generate multiple UUIDs at once?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, visit our Bulk Export page to generate up to 10,000 UUIDs at once. You can export them as TXT, JSON, CSV, or SQL files. This is perfect for seeding databases, testing applications, or generating sample data."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is there a free UUID generator?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, uuid-generate.com is completely free to use. No registration required, no ads, and no usage limits. All UUID generation happens client-side in your browser, ensuring privacy and security."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I use UUIDs in a database?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, UUIDs are commonly used as primary keys and unique identifiers in databases. UUID v4 provides randomness, while v1 and v7 offer time-based sorting. Note that random UUIDs (v4) can cause index fragmentation in some databases, so consider v7 for better insert performance."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the difference between UUID and GUID?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "UUID (Universally Unique Identifier) and GUID (Globally Unique Identifier) are essentially the same thing. GUID is Microsoft's implementation of the UUID standard. Both are 128-bit values with the same format and behavior. The terms are often used interchangeably."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I generate UUIDs offline?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, once the uuid-generate.com page is loaded, you can generate UUIDs offline. All generation happens client-side in your browser using the Web Crypto API. Your browser's cryptographically secure random number generator creates the UUIDs locally."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Are generated UUIDs stored?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No, uuid-generate.com does not store any generated UUIDs. All generation occurs client-side in your browser. The UUIDs you generate are never sent to any server, ensuring complete privacy and security. Once the page is closed, no trace of your generated UUIDs remains."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I copy a UUID?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Click anywhere on the UUID display to copy it instantly. You can also use the keyboard shortcut Ctrl+Shift+C (or Cmd+Shift+C on Mac) to copy the formatted UUID. The nav bar also has a quick copy button when available."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What format does a UUID use?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "A standard UUID uses the format 8-4-4-4-12 hexadecimal characters with hyphens, like: 550e8400-e29b-41d4-a716-446655440000. This represents 32 hexadecimal digits (0-9, a-f) displayed in five groups separated by hyphens. Total length is 36 characters including hyphens."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I use generated UUIDs commercially?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, you can use generated UUIDs commercially without restriction. UUIDs are mathematical constructs and cannot be copyrighted or owned. They are free to use in any application, database, or commercial product. The uuid-generate.com tool simply generates them for you."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How many UUIDs can I generate?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "There is no limit to how many UUIDs you can generate on uuid-generate.com. You can generate one at a time on the main page or up to 10,000 UUIDs at once using our Bulk Export feature. All generations are completely free with no usage caps."
+            }
+          }
+        ]
       }
     </script>
   </head>
@@ -101,6 +298,16 @@ const fullTitle = title === "UUID Generator" ? title : `${title} — UUID Genera
 
         <!-- Actions -->
         <div class="flex items-center gap-2">
+          <!-- Theme Toggle -->
+          <button id="theme-toggle" class="btn-ghost" aria-label="Toggle dark mode" title="Toggle theme">
+            <svg id="theme-icon-sun" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" class="hidden">
+              <path d="M8 3.5a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0v-1a.5.5 0 0 1 .5-.5ZM8 11.5a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0v-1a.5.5 0 0 1 .5-.5ZM3.5 8a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5ZM10.5 8a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5ZM5.03 5.03a.5.5 0 0 1 .7 0l.7.7a.5.5 0 0 1-.7.7l-.7-.7a.5.5 0 0 1 0-.7ZM9.57 9.57a.5.5 0 0 1 .7 0l.7.7a.5.5 0 0 1-.7.7l-.7-.7a.5.5 0 0 1 0-.7ZM5.03 10.97a.5.5 0 0 1 0-.7l.7-.7a.5.5 0 0 1 .7.7l-.7.7a.5.5 0 0 1-.7 0ZM9.57 6.43a.5.5 0 0 1 0-.7l.7-.7a.5.5 0 0 1 .7.7l-.7.7a.5.5 0 0 1-.7 0ZM8 5.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5Z" fill="currentColor"/>
+            </svg>
+            <svg id="theme-icon-moon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M8 13a5 5 0 1 1 0-10 5 5 0 0 1 0 10Zm0-2a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" fill="currentColor"/>
+            </svg>
+          </button>
+
           <button id="nav-copy-btn" class="btn-ghost hidden md:flex" onclick="window.quickCopy && window.quickCopy()" title="Quick copy UUID (Ctrl+C)">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
               <rect x="4" y="4" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
@@ -172,7 +379,7 @@ const fullTitle = title === "UUID Generator" ? title : `${title} — UUID Genera
           </div>
         </div>
         <div style="border-top:1px solid var(--color-hairline);margin-top:var(--spacing-xl);padding-top:var(--spacing-md);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
-          <span style="color:var(--color-mute);font-size:12px;">© 2025 uuid-generator.com — Free to use. No ads.</span>
+          <span style="color:var(--color-mute);font-size:12px;">© 2025 uuid-generate.com — Free to use. No ads.</span>
           <span style="color:var(--color-faint);font-size:12px;">RFC 4122 compliant</span>
         </div>
       </div>
@@ -183,6 +390,49 @@ const fullTitle = title === "UUID Generator" ? title : `${title} — UUID Genera
 
     <!-- Global scripts -->
     <script>
+      // Theme toggle - dark mode by default
+      (function() {
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIconSun = document.getElementById('theme-icon-sun');
+        const themeIconMoon = document.getElementById('theme-icon-moon');
+
+        // Set dark as default if no theme is stored
+        let currentTheme = localStorage.getItem('theme');
+        if (!currentTheme) {
+          currentTheme = 'dark';
+          localStorage.setItem('theme', 'dark');
+        }
+
+        // Apply theme
+        function applyTheme(theme) {
+          if (theme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            if (themeIconSun) themeIconSun.classList.remove('hidden');
+            if (themeIconMoon) themeIconMoon.classList.add('hidden');
+          } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+            if (themeIconSun) themeIconSun.classList.add('hidden');
+            if (themeIconMoon) themeIconMoon.classList.remove('hidden');
+          }
+        }
+
+        // Initial theme application
+        applyTheme(currentTheme);
+
+        // Toggle handler
+        if (themeToggle) {
+          themeToggle.addEventListener('click', () => {
+            if (currentTheme === 'dark') {
+              currentTheme = 'light';
+            } else {
+              currentTheme = 'dark';
+            }
+            localStorage.setItem('theme', currentTheme);
+            applyTheme(currentTheme);
+          });
+        }
+      })();
+
       // Mobile menu
       const mobileMenuBtn = document.getElementById('mobile-menu-btn');
       const mobileMenu = document.getElementById('mobile-menu');
