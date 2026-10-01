@@ -195,7 +195,7 @@ const fullTitle = title === "UUID Generator" ? title : `${title} — UUID Genera
       // Highlight active nav link
       const path = window.location.pathname;
       document.querySelectorAll('.nav-link[href]').forEach(link => {
-        const href = (link as HTMLAnchorElement).getAttribute('href') ?? '';
+        const href = link.getAttribute('href') ?? '';
         if (href === path || (path === '/' && href === '/') || (path !== '/' && href !== '/' && path.startsWith(href))) {
           link.classList.add('active');
         }
@@ -214,31 +214,31 @@ const fullTitle = title === "UUID Generator" ? title : `${title} — UUID Genera
           setTimeout(() => toast.remove(), 220);
         }, 2200);
       }
-      (window as any).showToast = showToast;
+      window.showToast = showToast;
 
       // Global copy UUID from nav button (uses global lastUUID set by page)
       function quickCopy() {
-        const uuid = (window as any).lastUUID;
+        const uuid = window.lastUUID;
         if (uuid) {
           navigator.clipboard.writeText(uuid).then(() => {
-            (window as any).showToast('UUID copied!');
-          });
+            window.showToast('UUID copied!');
+          }).catch(() => {});
         }
       }
-      (window as any).quickCopy = quickCopy;
+      window.quickCopy = quickCopy;
 
       // Keyboard shortcuts
       document.addEventListener('keydown', (e) => {
         // Ctrl/Cmd + G = Generate new UUID
         if ((e.ctrlKey || e.metaKey) && e.key === 'g') {
           e.preventDefault();
-          const generateBtn = document.getElementById('generate-btn') as HTMLButtonElement;
+          const generateBtn = document.getElementById('generate-btn');
           generateBtn?.click();
         }
         // Ctrl/Cmd + Shift + C = Copy UUID
         if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'C') {
           e.preventDefault();
-          const copyBtn = document.getElementById('copy-uuid-btn') as HTMLButtonElement;
+          const copyBtn = document.getElementById('copy-uuid-btn');
           copyBtn?.click();
         }
       });

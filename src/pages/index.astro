@@ -5,7 +5,7 @@ import Layout from "../layouts/Layout.astro";
 const url = Astro.url;
 const vParam = url.searchParams.get("v");
 const validVersions = ["1", "3", "4", "5", "7"];
-const defaultVersion = validVersions.includes(vParam ?? "") ? (vParam as string) : "4";
+const defaultVersion = validVersions.includes(vParam ?? "") ? vParam ?? "4" : "4";
 ---
 
 <Layout
@@ -141,7 +141,7 @@ const defaultVersion = validVersions.includes(vParam ?? "") ? (vParam as string)
       </div>
 
       <!-- Keyboard shortcut hint -->
-      <div style="margin-top:var(--spacing-md);" class="body-sm" style="color:var(--color-faint);">
+      <div style="margin-top:var(--spacing-md);color:var(--color-faint);" class="body-sm">
         <span style="color:var(--color-faint);">
           <kbd class="kbd">Ctrl+G</kbd> Generate &nbsp;·&nbsp;
           <kbd class="kbd">⇧C</kbd> Copy &nbsp;·&nbsp;
@@ -264,11 +264,11 @@ const defaultVersion = validVersions.includes(vParam ?? "") ? (vParam as string)
     const bytes = getRandom();
     const ms = Date.now();
     // First 48 bits = ms timestamp
-    bytes[0] = (ms / 2**40) & 0xFF;
-    bytes[1] = (ms / 2**32) & 0xFF;
-    bytes[2] = (ms / 2**24) & 0xFF;
-    bytes[3] = (ms / 2**16) & 0xFF;
-    bytes[4] = (ms / 2**8)  & 0xFF;
+    bytes[0] = (ms >> 40) & 0xFF;
+    bytes[1] = (ms >> 32) & 0xFF;
+    bytes[2] = (ms >> 24) & 0xFF;
+    bytes[3] = (ms >> 16) & 0xFF;
+    bytes[4] = (ms >> 8)  & 0xFF;
     bytes[5] = ms & 0xFF;
     bytes[6] = (bytes[6] & 0x0f) | 0x70; // version 7
     bytes[8] = (bytes[8] & 0x3f) | 0x80; // variant
@@ -363,7 +363,7 @@ const defaultVersion = validVersions.includes(vParam ?? "") ? (vParam as string)
     if (opts.noHyphens) out = out.replace(/-/g, '');
     if (opts.uppercase) out = out.toUpperCase();
     if (opts.braces) out = `{${out}}`;
-    if (opts.urn) out = `urn:uuid:${uuid}`; // URN always uses standard form
+    if (opts.urn) out = `urn:uuid:${out}`; // URN uses the current formatted version
     if (opts.base64) {
       const raw = uuid.replace(/-/g, '');
       const bytes = Uint8Array.from({ length: 16 }, (_, i) => parseInt(raw.slice(i*2, i*2+2), 16));
@@ -535,7 +535,7 @@ const defaultVersion = validVersions.includes(vParam ?? "") ? (vParam as string)
   // Version Pills
   // ============================================================
 
-  function switchVersion(v) {
+  async function switchVersion(v) {
     currentVersion = v;
     document.querySelectorAll('.btn-category-pill[data-version]').forEach(btn => {
       const isThis = btn.getAttribute('data-version') === v;
@@ -552,7 +552,7 @@ const defaultVersion = validVersions.includes(vParam ?? "") ? (vParam as string)
     }
 
     renderVersionInfo(v);
-    generate();
+    await generate();
   }
 
   document.querySelectorAll('.btn-category-pill[data-version]').forEach(btn => {
@@ -566,8 +566,8 @@ const defaultVersion = validVersions.includes(vParam ?? "") ? (vParam as string)
   // Generate Button
   // ============================================================
 
-  document.getElementById('generate-btn')?.addEventListener('click', () => {
-    generate();
+  document.getElementById('generate-btn')?.addEventListener('click', async () => {
+    await generate();
   });
 
   // ============================================================
@@ -586,7 +586,7 @@ const defaultVersion = validVersions.includes(vParam ?? "") ? (vParam as string)
   document.getElementById('copy-raw-btn')?.addEventListener('click', () => {
     navigator.clipboard.writeText(rawUUID).then(() => {
       window.showToast?.('Raw UUID copied!', '✓');
-    });
+    }).catch(() => {});
   });
 
   // Click on UUID display to copy
@@ -594,31 +594,31 @@ const defaultVersion = validVersions.includes(vParam ?? "") ? (vParam as string)
     const text = document.getElementById('uuid-text')?.textContent?.trim() ?? '';
     navigator.clipboard.writeText(text).then(() => {
       window.showToast?.('Copied!', '✓');
-    });
+    }).catch(() => {});
   });
 
   // ============================================================
   // Namespace / Name inputs (v3/v5)
   // ============================================================
 
-  document.getElementById('namespace-select')?.addEventListener('change', (e) => {
+  document.getElementById('namespace-select')?.addEventListener('change', async (e) => {
     const customRow = document.getElementById('custom-namespace-row');
     if ((e.target).value === 'custom') {
       customRow?.classList.remove('hidden');
     } else {
       customRow?.classList.add('hidden');
     }
-    generate();
+    await generate();
   });
 
   document.getElementById('name-input')?.addEventListener('input', () => {
     clearTimeout(window._nameDebounce);
-    window._nameDebounce = setTimeout(generate, 400);
+    window._nameDebounce = setTimeout(() => generate(), 400);
   });
 
   document.getElementById('custom-namespace-input')?.addEventListener('input', () => {
     clearTimeout(window._nsDebounce);
-    window._nsDebounce = setTimeout(generate, 400);
+    window._nsDebounce = setTimeout(() => generate(), 400);
   });
 
   // ============================================================
