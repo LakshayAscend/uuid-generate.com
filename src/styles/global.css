@@ -745,33 +745,261 @@ input[type="number"].text-input::-webkit-inner-spin-button {
 }
 
 /* ============================================================
-   Responsive
+   Responsive Design — Mobile First
    ============================================================ */
 
-@media (max-width: 640px) {
+/* Mobile: Extra Small (< 480px) */
+@media (max-width: 480px) {
+  .display-xl {
+    font-size: 28px;
+    line-height: 32px;
+    letter-spacing: -1px;
+  }
+
+  .heading-lg {
+    font-size: 20px;
+    line-height: 28px;
+    letter-spacing: -0.6px;
+  }
+
+  .heading-md {
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: -0.2px;
+  }
+
+  .body-lg {
+    font-size: 14px;
+    line-height: 22px;
+  }
+
+  .container {
+    padding-left: var(--spacing-sm);
+    padding-right: var(--spacing-sm);
+  }
+
+  /* Hero section */
+  .hero-mesh {
+    padding: var(--spacing-2xl) 0 var(--spacing-xl) !important;
+  }
+
+  /* UUID display */
+  .uuid-display {
+    font-size: 13px;
+    padding: var(--spacing-md);
+    line-height: 1.6;
+    letter-spacing: 0.02em;
+  }
+
+  /* Version pills should stack on mobile */
+  #version-pills {
+    gap: 6px !important;
+    margin-bottom: var(--spacing-md) !important;
+  }
+
+  .btn-category-pill {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+
+  /* Buttons should be full width or stack on very small screens */
+  .btn-primary-pill,
+  .btn-ghost {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+
+  /* Format toggles should wrap and be smaller */
+  .format-toggle {
+    font-size: 10px;
+    padding: 4px 8px;
+  }
+
+  /* Feature cards in grid */
+  [style*="grid-template-columns: repeat(auto-fit"]  {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Namespace inputs */
+  [style*="grid-template-columns: 1fr 2fr"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Footer */
+  .footer {
+    padding: var(--spacing-2xl) var(--spacing-sm);
+  }
+
+  /* Section spacing */
+  .section-band {
+    padding-top: var(--spacing-2xl);
+    padding-bottom: var(--spacing-2xl);
+  }
+
+  /* Generator card */
+  .feature-card-elevated {
+    padding: var(--spacing-md);
+  }
+
+  /* Reduce spacing around buttons */
+  [style*="display: flex"][style*="flex-wrap: wrap"] {
+    gap: var(--spacing-xs) !important;
+  }
+
+  /* Input fields */
+  .text-input {
+    padding: var(--spacing-xs) var(--spacing-xs);
+    font-size: 14px;
+  }
+
+  /* Keyboard hint text */
+  .kbd {
+    font-size: 9px;
+    padding: 1px 4px;
+  }
+
+  /* Hide copy button label on mobile, show icon only */
+  #nav-copy-btn span:not(svg) {
+    display: none;
+  }
+}
+
+/* Mobile: Small (480px - 640px) */
+@media (min-width: 481px) and (max-width: 640px) {
   .display-xl {
     font-size: 32px;
     line-height: 36px;
     letter-spacing: -1.2px;
   }
+
   .heading-lg {
     font-size: 24px;
     line-height: 32px;
     letter-spacing: -0.8px;
   }
+
   .uuid-display {
     font-size: 15px;
     padding: var(--spacing-md);
   }
+
   .container {
     padding-left: var(--spacing-md);
     padding-right: var(--spacing-md);
   }
-}
 
-@media (max-width: 768px) {
+  .hero-mesh {
+    padding: var(--spacing-3xl) 0 var(--spacing-2xl) !important;
+  }
+
   .section-band {
     padding-top: var(--spacing-2xl);
     padding-bottom: var(--spacing-2xl);
+  }
+
+  /* Grid should be single column */
+  [style*="grid-template-columns: repeat(auto-fit, minmax(220px"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  [style*="grid-template-columns: repeat(auto-fit, minmax(160px"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Tablet: Medium (641px - 768px) */
+@media (min-width: 641px) and (max-width: 768px) {
+  .section-band {
+    padding-top: var(--spacing-2xl);
+    padding-bottom: var(--spacing-2xl);
+  }
+
+  .container {
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+  }
+
+  /* Feature cards: 2 columns */
+  [style*="grid-template-columns: repeat(auto-fit, minmax(220px"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  [style*="grid-template-columns: repeat(auto-fit, minmax(160px"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* Tablet: Large & Desktop (769px+) */
+@media (min-width: 769px) {
+  /* Full desktop experience */
+}
+
+/* Touch device optimization */
+@media (hover: none) and (pointer: coarse) {
+  /* Increase touch targets */
+  .btn-primary-pill,
+  .btn-ghost,
+  .btn-category-pill,
+  .format-toggle {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 10px 16px;
+  }
+
+  /* Remove hover effects that don't work on touch */
+  .btn-primary:hover,
+  .btn-primary-pill:hover,
+  .btn-ghost:hover,
+  .nav-link:hover {
+    background-color: var(--color-canvas-elevated);
+  }
+
+  /* Increase click padding */
+  .nav-link {
+    padding: var(--spacing-sm);
+  }
+}
+
+/* Landscape orientation on mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+  .hero-mesh {
+    padding: var(--spacing-xl) 0 var(--spacing-md) !important;
+  }
+
+  .section-band {
+    padding-top: var(--spacing-lg);
+    padding-bottom: var(--spacing-lg);
+  }
+
+  .display-xl {
+    font-size: 24px;
+    line-height: 28px;
+  }
+
+  #version-pills {
+    gap: 4px !important;
+  }
+}
+
+/* ============================================================
+   Common Mobile Patterns
+   ============================================================ */
+
+/* FAQ Section Responsive Styles - Only affects FAQ */
+@media (max-width: 768px) {
+  /* FAQ text wrapping */
+  #main-content > section[style*="padding:var(--spacing-4xl) 0"] .faq-item {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  }
+
+  /* FAQ heading items */
+  #main-content > section[style*="padding:var(--spacing-4xl) 0"] .faq-item h3.heading-md {
+    font-size: 18px;
+  }
+
+  /* FAQ paragraph text */
+  #main-content > section[style*="padding:var(--spacing-4xl) 0"] .faq-item p.body {
+    font-size: 14px;
   }
 }

@@ -25,12 +25,12 @@ const defaultVersion = validVersions.includes(vParam ?? "") ? vParam ?? "4" : "4
       </p>
 
       <!-- Version Selector Pills -->
-      <div id="version-pills" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:var(--spacing-lg);" role="group" aria-label="UUID Version">
-        <button class="btn-category-pill" data-version="1" id="pill-v1" aria-pressed="false">v1 — Time-based</button>
-        <button class="btn-category-pill" data-version="3" id="pill-v3" aria-pressed="false">v3 — MD5 Name</button>
-        <button class="btn-category-pill active" data-version="4" id="pill-v4" aria-pressed="true">v4 — Random</button>
-        <button class="btn-category-pill" data-version="5" id="pill-v5" aria-pressed="false">v5 — SHA-1 Name</button>
-        <button class="btn-category-pill" data-version="7" id="pill-v7" aria-pressed="false">v7 — Unix Epoch</button>
+      <div id="version-pills" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:var(--spacing-lg);max-width:100%;" role="group" aria-label="UUID Version">
+        <button class="btn-category-pill" data-version="1" id="pill-v1" aria-pressed="false" style="min-width:fit-content;">v1 — Time-based</button>
+        <button class="btn-category-pill" data-version="3" id="pill-v3" aria-pressed="false" style="min-width:fit-content;">v3 — MD5 Name</button>
+        <button class="btn-category-pill active" data-version="4" id="pill-v4" aria-pressed="true" style="min-width:fit-content;">v4 — Random</button>
+        <button class="btn-category-pill" data-version="5" id="pill-v5" aria-pressed="false" style="min-width:fit-content;">v5 — SHA-1 Name</button>
+        <button class="btn-category-pill" data-version="7" id="pill-v7" aria-pressed="false" style="min-width:fit-content;">v7 — Unix Epoch</button>
       </div>
     </div>
   </section>
@@ -104,8 +104,8 @@ const defaultVersion = validVersions.includes(vParam ?? "") ? vParam ?? "4" : "4
       </div>
 
       <!-- Action Buttons -->
-      <div style="display:flex;flex-wrap:wrap;gap:var(--spacing-xs);align-items:center;">
-        <button id="generate-btn" class="btn-primary-pill" aria-label="Generate new UUID (Ctrl+G)">
+      <div style="display:flex;flex-wrap:wrap;gap:var(--spacing-xs);align-items:center;justify-content:center;">
+        <button id="generate-btn" class="btn-primary-pill" aria-label="Generate new UUID (Ctrl+G)" style="flex:1;min-width:140px;">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
             <path d="M2 8a6 6 0 1 1 6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
             <path d="M2 5v3h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -114,7 +114,7 @@ const defaultVersion = validVersions.includes(vParam ?? "") ? vParam ?? "4" : "4
           <span class="kbd" style="color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.15);">Ctrl+G</span>
         </button>
 
-        <button id="copy-uuid-btn" class="btn-ghost" aria-label="Copy UUID to clipboard (Ctrl+Shift+C)">
+        <button id="copy-uuid-btn" class="btn-ghost" aria-label="Copy UUID to clipboard (Ctrl+Shift+C)" style="flex:1;min-width:100px;">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
             <rect x="4" y="4" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
             <path d="M2 10V2h8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
@@ -123,14 +123,14 @@ const defaultVersion = validVersions.includes(vParam ?? "") ? vParam ?? "4" : "4
           <span class="kbd">⇧C</span>
         </button>
 
-        <button id="copy-raw-btn" class="btn-ghost" aria-label="Copy raw UUID without formatting">
+        <button id="copy-raw-btn" class="btn-ghost" aria-label="Copy raw UUID without formatting" style="flex:1;min-width:100px;">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
             <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
           Copy Raw
         </button>
 
-        <a href="/bulk" id="bulk-link" class="btn-ghost" aria-label="Go to bulk generator">
+        <a href="/bulk" id="bulk-link" class="btn-ghost" aria-label="Go to bulk generator" style="flex:1;min-width:80px;justify-content:center;">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
             <rect x="1" y="1" width="12" height="2.5" rx="1" fill="currentColor" opacity="0.7"/>
             <rect x="1" y="5.5" width="12" height="2.5" rx="1" fill="currentColor" opacity="0.5"/>
@@ -160,7 +160,7 @@ const defaultVersion = validVersions.includes(vParam ?? "") ? vParam ?? "4" : "4
     <!-- Feature Grid -->
     <div class="mono-eyebrow" style="color:var(--color-mute);text-align:center;margin-bottom:var(--spacing-xl);">Why uuid-generate.com</div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--spacing-md);">
-      <div class="feature-card">
+      <div class="feature-card" style="display:flex;flex-direction:column;align-items:center;text-align:center;">
         <div style="width:32px;height:32px;border-radius:var(--radius-sm);background:var(--color-hairline-soft);display:flex;align-items:center;justify-content:center;margin-bottom:var(--spacing-sm);">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
             <rect x="1" y="1" width="6" height="6" rx="1.5" fill="#171717"/>
@@ -172,7 +172,7 @@ const defaultVersion = validVersions.includes(vParam ?? "") ? vParam ?? "4" : "4
         <div class="heading-md" style="margin-bottom:6px;">5 UUID Versions</div>
         <p class="body-md" style="color:var(--color-body);margin:0;">v1, v3, v4, v5, and v7 — the full RFC 4122 set plus the modern Unix-epoch v7.</p>
       </div>
-      <div class="feature-card">
+      <div class="feature-card" style="display:flex;flex-direction:column;align-items:center;text-align:center;">
         <div style="width:32px;height:32px;border-radius:var(--radius-sm);background:var(--color-hairline-soft);display:flex;align-items:center;justify-content:center;margin-bottom:var(--spacing-sm);">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
             <rect x="2" y="4" width="12" height="8" rx="1.5" stroke="#171717" stroke-width="1.2"/>
@@ -182,7 +182,7 @@ const defaultVersion = validVersions.includes(vParam ?? "") ? vParam ?? "4" : "4
         <div class="heading-md" style="margin-bottom:6px;">6 Output Formats</div>
         <p class="body-md" style="color:var(--color-body);margin:0;">Lowercase, UPPERCASE, no hyphens, braces, URN prefix, and Base64 encoding.</p>
       </div>
-      <div class="feature-card">
+      <div class="feature-card" style="display:flex;flex-direction:column;align-items:center;text-align:center;">
         <div style="width:32px;height:32px;border-radius:var(--radius-sm);background:var(--color-hairline-soft);display:flex;align-items:center;justify-content:center;margin-bottom:var(--spacing-sm);">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
             <path d="M13 10V13H3V10" stroke="#171717" stroke-width="1.2" stroke-linecap="round"/>
@@ -192,7 +192,7 @@ const defaultVersion = validVersions.includes(vParam ?? "") ? vParam ?? "4" : "4
         <div class="heading-md" style="margin-bottom:6px;">Bulk Export</div>
         <p class="body-md" style="color:var(--color-body);margin:0;">Generate up to 10,000 UUIDs and export as TXT, JSON, CSV, or SQL.</p>
       </div>
-      <div class="feature-card">
+      <div class="feature-card" style="display:flex;flex-direction:column;align-items:center;text-align:center;">
         <div style="width:32px;height:32px;border-radius:var(--radius-sm);background:var(--color-hairline-soft);display:flex;align-items:center;justify-content:center;margin-bottom:var(--spacing-sm);">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
             <circle cx="8" cy="8" r="6" stroke="#171717" stroke-width="1.2"/>
@@ -279,146 +279,146 @@ const defaultVersion = validVersions.includes(vParam ?? "") ? vParam ?? "4" : "4
 
   <!-- FAQ Section -->
   <section class="container section-band" style="padding:var(--spacing-4xl) 0;border-top:1px solid var(--color-hairline);">
-    <div style="max-width: 800px; margin: 0 auto;">
-      <div class="heading-lg" style="margin-bottom: var(--spacing-xl); text-align: center;">Frequently Asked Questions (FAQ)</div>
+    <div style="max-width: 800px; margin: 0 auto; width: 100%;">
+      <div class="heading-lg" style="margin-bottom: var(--spacing-xl); text-align: center; word-break: break-word;">Frequently Asked Questions (FAQ)</div>
       <div style="color: var(--color-body); margin-bottom: var(--spacing-2xl);">
 
         <div class="faq-item" style="margin-bottom: var(--spacing-xl);">
-          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink);">What is a UUID?</h3>
-          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7;">
+          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink); word-break: break-word;">What is a UUID?</h3>
+          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7; word-break: break-word;">
             UUID (Universally Unique Identifier) is a 128-bit identifier standardized by RFC 4122. It is designed to be unique across all systems without requiring a central authority. UUIDs are typically represented as 32 hexadecimal characters displayed in five groups separated by hyphens.
           </p>
         </div>
 
         <div class="faq-item" style="margin-bottom: var(--spacing-xl);">
-          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink);">What is a UUID generator?</h3>
-          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7;">
+          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink); word-break: break-word;">What is a UUID generator?</h3>
+          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7; word-break: break-word;">
             A UUID generator is a tool or software that creates universally unique identifiers automatically. It can generate different versions of UUIDs (v1, v3, v4, v5, v7) based on specific algorithms including time-based, name-based (MD5/SHA-1), random, and Unix epoch-based methods.
           </p>
         </div>
 
         <div class="faq-item" style="margin-bottom: var(--spacing-xl);">
-          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink);">How do I generate a UUID?</h3>
-          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7;">
+          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink); word-break: break-word;">How do I generate a UUID?</h3>
+          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7; word-break: break-word;">
             To generate a UUID, select your desired version (v1, v3, v4, v5, or v7) from the version selector, and click the Generate button or press Ctrl+G. The UUID appears instantly in your chosen format. You can copy it with Ctrl+Shift+C or by clicking the UUID display.
           </p>
         </div>
 
         <div class="faq-item" style="margin-bottom: var(--spacing-xl);">
-          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink);">What is UUID v1?</h3>
-          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7;">
+          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink); word-break: break-word;">What is UUID v1?</h3>
+          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7; word-break: break-word;">
             UUID v1 is a time-based UUID generated from the current timestamp (100-nanosecond intervals since Oct 15, 1582) and a node ID (typically MAC address). Version 1 UUIDs are sortable by creation time, making them useful for database primary keys where chronological ordering matters.
           </p>
         </div>
 
         <div class="faq-item" style="margin-bottom: var(--spacing-xl);">
-          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink);">What is UUID v4?</h3>
-          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7;">
+          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink); word-break: break-word;">What is UUID v4?</h3>
+          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7; word-break: break-word;">
             UUID v4 is a random UUID generated using cryptographically secure random numbers. It provides a 122-bit random component, ensuring near-zero collision probability (~1 in 5.3×10³⁶). It is the most widely used UUID version for general-purpose unique identifiers.
           </p>
         </div>
 
         <div class="faq-item" style="margin-bottom: var(--spacing-xl);">
-          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink);">What is UUID v6?</h3>
-          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7;">
+          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink); word-break: break-word;">What is UUID v6?</h3>
+          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7; word-break: break-word;">
             UUID v6 is a reordered variant of v1 that maintains timestamp-based sorting while hiding the node ID. It provides lexicographically sortable UUIDs with privacy improvements over v1, though it is less commonly supported than v1, v4, or v7.
           </p>
         </div>
 
         <div class="faq-item" style="margin-bottom: var(--spacing-xl);">
-          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink);">What is UUID v7?</h3>
-          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7;">
+          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink); word-break: break-word;">What is UUID v7?</h3>
+          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7; word-break: break-word;">
             UUID v7 is a modern UUID format standardized in RFC 9562. It encodes the current Unix timestamp in milliseconds in the most-significant bits, followed by random bits. V7 UUIDs sort lexicographically by creation time and work great as database primary keys.
           </p>
         </div>
 
         <div class="faq-item" style="margin-bottom: var(--spacing-xl);">
-          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink);">What is the difference between UUID v4 and UUID v7?</h3>
-          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7;">
+          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink); word-break: break-word;">What is the difference between UUID v4 and UUID v7?</h3>
+          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7; word-break: break-word;">
             UUID v4 uses completely random numbers for all bits (except version/variant), while UUID v7 embeds a Unix timestamp in the first 48 bits followed by random bits. V4 provides maximum entropy but unsorted output, while v7 provides time-based sorting with minimal collision risk. V7 is better for database indexes where chronological order matters.
           </p>
         </div>
 
         <div class="faq-item" style="margin-bottom: var(--spacing-xl);">
-          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink);">Are UUIDs unique?</h3>
-          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7;">
+          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink); word-break: break-word;">Are UUIDs unique?</h3>
+          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7; word-break: break-word;">
             UUIDs are designed to be universally unique. UUID v4 has a collision probability of approximately 1 in 5.3×10³⁶ — so low that generating UUIDs every second for billions of years would likely never produce a duplicate. UUID v1 and v7 are also unique within their generation scope.
           </p>
         </div>
 
         <div class="faq-item" style="margin-bottom: var(--spacing-xl);">
-          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink);">Are UUIDs random?</h3>
-          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7;">
+          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink); word-break: break-word;">Are UUIDs random?</h3>
+          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7; word-break: break-word;">
             It depends on the version. UUID v4 is completely random (122 random bits). UUID v1 uses a timestamp and node ID. UUID v3/v5 use MD5/SHA-1 hashes of a namespace and name (deterministic). UUID v7 uses a Unix timestamp plus random bits. So some versions are random, while others are time-based or deterministic.
           </p>
         </div>
 
         <div class="faq-item" style="margin-bottom: var(--spacing-xl);">
-          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink);">Can I generate multiple UUIDs at once?</h3>
-          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7;">
+          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink); word-break: break-word;">Can I generate multiple UUIDs at once?</h3>
+          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7; word-break: break-word;">
             Yes, visit our <a href="/bulk" style="color: var(--color-primary);">Bulk Export page</a> to generate up to 10,000 UUIDs at once. You can export them as TXT, JSON, CSV, or SQL files. This is perfect for seeding databases, testing applications, or generating sample data.
           </p>
         </div>
 
         <div class="faq-item" style="margin-bottom: var(--spacing-xl);">
-          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink);">Is there a free UUID generator?</h3>
-          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7;">
+          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink); word-break: break-word;">Is there a free UUID generator?</h3>
+          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7; word-break: break-word;">
             Yes, uuid-generate.com is completely free to use. No registration required, no ads, and no usage limits. All UUID generation happens client-side in your browser, ensuring privacy and security.
           </p>
         </div>
 
         <div class="faq-item" style="margin-bottom: var(--spacing-xl);">
-          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink);">Can I use UUIDs in a database?</h3>
-          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7;">
+          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink); word-break: break-word;">Can I use UUIDs in a database?</h3>
+          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7; word-break: break-word;">
             Yes, UUIDs are commonly used as primary keys and unique identifiers in databases. UUID v4 provides randomness, while v1 and v7 offer time-based sorting. Note that random UUIDs (v4) can cause index fragmentation in some databases, so consider v7 for better insert performance.
           </p>
         </div>
 
         <div class="faq-item" style="margin-bottom: var(--spacing-xl);">
-          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink);">What is the difference between UUID and GUID?</h3>
-          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7;">
+          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink); word-break: break-word;">What is the difference between UUID and GUID?</h3>
+          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7; word-break: break-word;">
             UUID (Universally Unique Identifier) and GUID (Globally Unique Identifier) are essentially the same thing. GUID is Microsoft's implementation of the UUID standard. Both are 128-bit values with the same format and behavior. The terms are often used interchangeably.
           </p>
         </div>
 
         <div class="faq-item" style="margin-bottom: var(--spacing-xl);">
-          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink);">Can I generate UUIDs offline?</h3>
-          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7;">
+          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink); word-break: break-word;">Can I generate UUIDs offline?</h3>
+          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7; word-break: break-word;">
             Yes, once the uuid-generate.com page is loaded, you can generate UUIDs offline. All generation happens client-side in your browser using the Web Crypto API. Your browser's cryptographically secure random number generator creates the UUIDs locally.
           </p>
         </div>
 
         <div class="faq-item" style="margin-bottom: var(--spacing-xl);">
-          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink);">Are generated UUIDs stored?</h3>
-          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7;">
+          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink); word-break: break-word;">Are generated UUIDs stored?</h3>
+          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7; word-break: break-word;">
             No, uuid-generate.com does not store any generated UUIDs. All generation occurs client-side in your browser. The UUIDs you generate are never sent to any server, ensuring complete privacy and security. Once the page is closed, no trace of your generated UUIDs remains.
           </p>
         </div>
 
         <div class="faq-item" style="margin-bottom: var(--spacing-xl);">
-          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink);">How do I copy a UUID?</h3>
-          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7;">
+          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink); word-break: break-word;">How do I copy a UUID?</h3>
+          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7; word-break: break-word;">
             Click anywhere on the UUID display to copy it instantly. You can also use the keyboard shortcut Ctrl+Shift+C (or Cmd+Shift+C on Mac) to copy the formatted UUID. The nav bar also has a quick copy button when available.
           </p>
         </div>
 
         <div class="faq-item" style="margin-bottom: var(--spacing-xl);">
-          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink);">What format does a UUID use?</h3>
-          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7;">
+          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink); word-break: break-word;">What format does a UUID use?</h3>
+          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7; word-break: break-word;">
             A standard UUID uses the format 8-4-4-4-12 hexadecimal characters with hyphens, like: 550e8400-e29b-41d4-a716-446655440000. This represents 32 hexadecimal digits (0-9, a-f) displayed in five groups separated by hyphens. Total length is 36 characters including hyphens.
           </p>
         </div>
 
         <div class="faq-item" style="margin-bottom: var(--spacing-xl);">
-          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink);">Can I use generated UUIDs commercially?</h3>
-          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7;">
+          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink); word-break: break-word;">Can I use generated UUIDs commercially?</h3>
+          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7; word-break: break-word;">
             Yes, you can use generated UUIDs commercially without restriction. UUIDs are mathematical constructs and cannot be copyrighted or owned. They are free to use in any application, database, or commercial product. The uuid-generate.com tool simply generates them for you.
           </p>
         </div>
 
         <div class="faq-item" style="margin-bottom: var(--spacing-xl);">
-          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink);">How many UUIDs can I generate?</h3>
-          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7;">
+          <h3 class="heading-md" style="margin: 0 0 var(--spacing-xs); color: var(--color-ink); word-break: break-word;">How many UUIDs can I generate?</h3>
+          <p class="body" style="color: var(--color-body); margin: 0; line-height: 1.7; word-break: break-word;">
             There is no limit to how many UUIDs you can generate on uuid-generate.com. You can generate one at a time on the main page or up to 10,000 UUIDs at once using our Bulk Export feature. All generations are completely free with no usage caps.
           </p>
         </div>
@@ -433,8 +433,8 @@ const defaultVersion = validVersions.includes(vParam ?? "") ? vParam ?? "4" : "4
       <div class="heading-lg" style="margin-bottom:var(--spacing-md);">Need UUIDs in bulk?</div>
       <p class="body-lg" style="color:var(--color-body);margin-bottom:var(--spacing-xl);">Generate thousands of UUIDs and download as TXT, JSON, CSV, or SQL.</p>
       <div style="display:flex;gap:var(--spacing-md);justify-content:center;flex-wrap:wrap;">
-        <a href="/bulk" class="btn-primary-pill" id="cta-bulk-btn">Go to Bulk Generator</a>
-        <a href="/validate" class="btn-ghost" id="cta-validate-btn" style="border-radius:var(--radius-pill);padding:10px 20px;font-size:16px;">Validate a UUID</a>
+        <a href="/bulk" class="btn-primary-pill" id="cta-bulk-btn" style="min-width:160px;">Go to Bulk Generator</a>
+        <a href="/validate" class="btn-ghost" id="cta-validate-btn" style="border-radius:var(--radius-pill);padding:10px 20px;font-size:16px;min-width:140px;">Validate a UUID</a>
       </div>
     </div>
   </section>

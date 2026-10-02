@@ -1,4 +1,5 @@
 ---
+import { Image } from "astro:assets";
 import "../styles/global.css";
 
 interface Props {
@@ -60,8 +61,12 @@ const ogImage = "https://uuid-generate.com/og-image.png";
     <meta name="bingbot" content="index, follow" />
 
     <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="UUID-Generate" />
+    <link rel="manifest" href="/site.webmanifest" />
 
     <!-- Fonts: Geist Sans + Geist Mono from Google Fonts (CDN) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -275,16 +280,9 @@ const ogImage = "https://uuid-generate.com/og-image.png";
     <!-- Navigation -->
     <header class="nav-bar sticky top-0 z-50">
       <div class="container flex items-center justify-between h-12">
-        <!-- Wordmark -->
-        <a href="/" id="nav-logo" class="flex items-center gap-2 no-underline" aria-label="UUID Generator Home">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <rect x="1" y="1" width="8" height="8" rx="2" fill="#171717"/>
-            <rect x="11" y="1" width="8" height="8" rx="2" fill="#171717" opacity="0.4"/>
-            <rect x="1" y="11" width="8" height="8" rx="2" fill="#171717" opacity="0.4"/>
-            <rect x="11" y="11" width="8" height="8" rx="2" fill="#171717" opacity="0.7"/>
-          </svg>
-          <span style="font-size:15px;font-weight:600;color:var(--color-ink);letter-spacing:-0.3px;">uuid-generator</span>
-          <span class="mono-eyebrow" style="color:var(--color-mute);margin-left:2px;">.com</span>
+        <!-- Logo -->
+        <a href="/" id="nav-logo" class="no-underline flex items-center gap-2" aria-label="UUID Generator Home">
+          <Image src="/logo-nav.png" alt="UUID Generator" width="32" height="32" style="width:32px;height:32px;" loading="eager" />
         </a>
 
         <!-- Nav Links -->
@@ -316,12 +314,211 @@ const ogImage = "https://uuid-generate.com/og-image.png";
             Copy UUID
           </button>
 
-          <!-- Mobile menu toggle -->
+          <!-- Mobile menu button (hidden on desktop) -->
           <button id="mobile-menu-btn" class="btn-ghost md:hidden" aria-label="Open menu" aria-expanded="false">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
               <path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
             </svg>
           </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Mobile Menu (sticky positioned) -->
+    <div id="mobile-menu" class="mobile-menu hidden md:hidden sticky top-12 z-40" style="background:var(--color-canvas-elevated);border-bottom:1px solid var(--color-hairline);">
+      <nav class="container flex flex-col gap-1 py-3" aria-label="Mobile navigation">
+        <a href="/" class="nav-link block">Generate</a>
+        <a href="/validate" class="nav-link block">Validate</a>
+        <a href="/bulk" class="nav-link block">Bulk Export</a>
+        <a href="/decode" class="nav-link block">Decode</a>
+        <a href="/about" class="nav-link block">About</a>
+      </nav>
+    </div>
+
+    <!-- Overlay for mobile menu -->
+    <div id="mobile-menu-overlay" class="hidden fixed inset-0 bg-black/20 z-30 md:hidden" style="backdrop-filter: blur(2px);"></div>
+
+    <!-- Page Content (add margin when menu is open) -->
+    <main id="main-content">
+      <slot />
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:var(--spacing-xl);">
+          <div>
+            <div style="font-weight:600;color:var(--color-ink);margin-bottom:var(--spacing-sm);">UUID Generator</div>
+            <p style="color:var(--color-mute);font-size:13px;line-height:1.5;margin:0;">
+              Fast, free, developer-friendly UUID generation. No ads. No tracking.
+            </p>
+          </div>
+          <div>
+            <div class="mono-eyebrow" style="color:var(--color-mute);margin-bottom:var(--spacing-sm);">Tools</div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <a href="/" class="nav-link" style="padding:2px 6px;">UUID v4 Generator</a>
+              <a href="/validate" class="nav-link" style="padding:2px 6px;">UUID Validator</a>
+              <a href="/bulk" class="nav-link" style="padding:2px 6px;">Bulk Generator</a>
+              <a href="/decode" class="nav-link" style="padding:2px 6px;">UUID Decoder</a>
+            </div>
+          </div>
+          <div>
+            <div class="mono-eyebrow" style="color:var(--color-mute);margin-bottom:var(--spacing-sm);">Versions</div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <a href="/?v=1" class="nav-link" style="padding:2px 6px;">UUID v1 (time-based)</a>
+              <a href="/?v=4" class="nav-link" style="padding:2px 6px;">UUID v4 (random)</a>
+              <a href="/?v=7" class="nav-link" style="padding:2px 6px;">UUID v7 (Unix epoch)</a>
+            </div>
+          </div>
+          <div>
+            <div class="mono-eyebrow" style="color:var(--color-mute);margin-bottom:var(--spacing-sm);">Resources</div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <a href="/about" class="nav-link" style="padding:2px 6px;">About UUIDs</a>
+              <a href="/about#rfc4122" class="nav-link" style="padding:2px 6px;">RFC 4122</a>
+              <a href="/about#faq" class="nav-link" style="padding:2px 6px;">FAQ</a>
+            </div>
+          </div>
+        </div>
+        <div style="border-top:1px solid var(--color-hairline);margin-top:var(--spacing-xl);padding-top:var(--spacing-md);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+          <span style="color:var(--color-mute);font-size:12px;">© 2025 uuid-generate.com — Free to use. No ads.</span>
+          <span style="color:var(--color-faint);font-size:12px;">RFC 4122 compliant</span>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Toast container -->
+    <div id="toast-container" aria-live="polite" aria-label="Notifications"></div>
+
+    <!-- Global scripts -->
+    <script>
+      // Theme toggle - dark mode by default
+      (function() {
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIconSun = document.getElementById('theme-icon-sun');
+        const themeIconMoon = document.getElementById('theme-icon-moon');
+
+        // Set dark as default if no theme is stored
+        let currentTheme = localStorage.getItem('theme');
+        if (!currentTheme) {
+          currentTheme = 'dark';
+          localStorage.setItem('theme', 'dark');
+        }
+
+        // Apply theme
+        function applyTheme(theme) {
+          if (theme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            if (themeIconSun) themeIconSun.classList.remove('hidden');
+            if (themeIconMoon) themeIconMoon.classList.add('hidden');
+          } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+            if (themeIconSun) themeIconSun.classList.add('hidden');
+            if (themeIconMoon) themeIconMoon.classList.remove('hidden');
+          }
+        }
+
+        // Initial theme application
+        applyTheme(currentTheme);
+
+        // Toggle handler
+        if (themeToggle) {
+          themeToggle.addEventListener('click', () => {
+            if (currentTheme === 'dark') {
+              currentTheme = 'light';
+            } else {
+              currentTheme = 'dark';
+            }
+            localStorage.setItem('theme', currentTheme);
+            applyTheme(currentTheme);
+          });
+        }
+      })();
+
+      // Mobile menu with overlay
+      const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+
+      function toggleMobileMenu() {
+        const isHidden = mobileMenu?.classList.contains('hidden');
+        mobileMenu?.classList.toggle('hidden');
+        mobileMenuOverlay?.classList.toggle('hidden');
+        mobileMenuBtn?.setAttribute('aria-expanded', String(isHidden));
+
+        // Prevent body scroll when menu is open
+        if (isHidden) {
+          document.body.style.overflow = 'hidden';
+        } else {
+          document.body.style.overflow = '';
+        }
+      }
+
+      mobileMenuBtn?.addEventListener('click', toggleMobileMenu);
+      mobileMenuOverlay?.addEventListener('click', toggleMobileMenu);
+
+      // Close mobile menu when clicking a link
+      mobileMenu?.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          mobileMenu?.classList.add('hidden');
+          mobileMenuOverlay?.classList.add('hidden');
+          mobileMenuBtn?.setAttribute('aria-expanded', 'false');
+          document.body.style.overflow = '';
+        });
+      });
+
+      // Highlight active nav link
+      const path = window.location.pathname;
+      document.querySelectorAll('.nav-link[href]').forEach(link => {
+        const href = link.getAttribute('href') ?? '';
+        if (href === path || (path === '/' && href === '/') || (path !== '/' && href !== '/' && path.startsWith(href))) {
+          link.classList.add('active');
+        }
+      });
+
+      // Global toast system
+      function showToast(message: string, icon = '✓') {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.innerHTML = `<span>${icon}</span><span>${message}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => {
+          toast.classList.add('toast-exit');
+          setTimeout(() => toast.remove(), 220);
+        }, 2200);
+      }
+      window.showToast = showToast;
+
+      // Global copy UUID from nav button (uses global lastUUID set by page)
+      function quickCopy() {
+        const uuid = window.lastUUID;
+        if (uuid) {
+          navigator.clipboard.writeText(uuid).then(() => {
+            window.showToast('UUID copied!');
+          }).catch(() => {});
+        }
+      }
+      window.quickCopy = quickCopy;
+
+      // Keyboard shortcuts
+      document.addEventListener('keydown', (e) => {
+        // Ctrl/Cmd + G = Generate new UUID
+        if ((e.ctrlKey || e.metaKey) && e.key === 'g') {
+          e.preventDefault();
+          const generateBtn = document.getElementById('generate-btn');
+          generateBtn?.click();
+        }
+        // Ctrl/Cmd + Shift + C = Copy UUID
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'C') {
+          e.preventDefault();
+          const copyBtn = document.getElementById('copy-uuid-btn');
+          copyBtn?.click();
+        }
+      });
+    </script>
+  </body>
+</html>
         </div>
       </div>
     </header>
