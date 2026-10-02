@@ -120,17 +120,22 @@ import Layout from "../layouts/Layout.astro";
   // ============================================================
 
   const SECTION_COLORS = [
-    { bg: '#dbeafe', border: '#93c5fd', text: '#1d4ed8' },
-    { bg: '#dcfce7', border: '#86efac', text: '#15803d' },
-    { bg: '#fef9c3', border: '#fde047', text: '#854d0e' },
-    { bg: '#fce7f3', border: '#f9a8d4', text: '#9d174d' },
-    { bg: '#ede9fe', border: '#c4b5fd', text: '#6d28d9' },
+    { bg: 'rgba(59, 130, 246, 0.15)', border: 'rgba(59, 130, 246, 0.4)', text: 'var(--color-link)' },
+    { bg: 'rgba(34, 197, 94, 0.15)', border: 'rgba(34, 197, 94, 0.4)', text: 'var(--color-success)' },
+    { bg: 'rgba(234, 179, 8, 0.15)', border: 'rgba(234, 179, 8, 0.4)', text: 'var(--color-warning)' },
+    { bg: 'rgba(236, 72, 153, 0.15)', border: 'rgba(236, 72, 153, 0.4)', text: 'var(--color-pink)' },
+    { bg: 'rgba(168, 85, 247, 0.15)', border: 'rgba(168, 85, 247, 0.4)', text: 'var(--color-violet)' },
   ];
 
   function renderDecoded(result) {
     if (!result) return `
-      <div class="feature-card" style="border-color:#fecaca;background:#fff5f5;">
-        <strong style="color:var(--color-error);">Invalid UUID</strong>
+      <div class="validator-result invalid fade-slide-in">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:var(--spacing-sm);">
+          <div class="validator-badge invalid">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 2l6 6M8 2L2 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <strong class="validator-status-text invalid">Invalid UUID</strong>
+        </div>
         <p class="body-md" style="color:var(--color-body);margin:var(--spacing-xs) 0 0;">Could not parse — check the format is <code class="code-text">xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</code></p>
       </div>`;
 

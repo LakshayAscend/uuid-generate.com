@@ -145,10 +145,10 @@ import Layout from "../layouts/Layout.astro";
       return `
         <div class="validator-result invalid fade-slide-in">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:var(--spacing-sm);">
-            <div style="width:20px;height:20px;border-radius:50%;background:#fee2e2;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-              <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 2l6 6M8 2L2 8" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <div class="validator-badge invalid">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 2l6 6M8 2L2 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
             </div>
-            <strong style="color:#dc2626;">Invalid UUID</strong>
+            <strong class="validator-status-text invalid">Invalid UUID</strong>
           </div>
           <p class="body-md" style="color:var(--color-body);margin:0;">
             "${result.raw}" does not conform to RFC 4122 UUID format.
@@ -189,10 +189,10 @@ import Layout from "../layouts/Layout.astro";
     return `
       <div class="validator-result valid fade-slide-in">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:var(--spacing-md);">
-          <div style="width:20px;height:20px;border-radius:50%;background:#dcfce7;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.5l2.5 2.5 4-5" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="validator-badge valid">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5.5l2.5 2.5 4-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
-          <strong style="color:#16a34a;">Valid UUID</strong>
+          <strong class="validator-status-text valid">Valid UUID</strong>
         </div>
 
         <div style="font-family:var(--font-mono);font-size:15px;color:var(--color-ink);word-break:break-all;margin-bottom:var(--spacing-md);padding:10px 14px;background:var(--color-canvas);border-radius:var(--radius-sm);border:1px solid var(--color-hairline);">${uuid}</div>
