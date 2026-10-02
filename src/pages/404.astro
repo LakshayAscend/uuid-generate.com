@@ -1,0 +1,89 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+  title="404 — Page Not Found"
+  description="The page you are looking for does not exist or has been moved. Generate, validate, or decode UUIDs on UUID Generator."
+  noIndex={true}
+>
+  <section class="container flex flex-col items-center justify-center text-center section-band" style="min-height: calc(80vh - 48px); max-width: 680px; margin: 0 auto; padding: var(--spacing-4xl) var(--spacing-md);">
+    
+    <!-- Eyebrow Badge -->
+    <div style="display:inline-flex;align-items:center;gap:6px;background:var(--color-canvas-elevated);border:1px solid var(--color-hairline);padding:4px 12px;border-radius:var(--radius-pill);margin-bottom:var(--spacing-lg);">
+      <span style="width:8px;height:8px;border-radius:50%;background:var(--color-warning);display:inline-block;"></span>
+      <span class="mono-eyebrow" style="color:var(--color-mute);font-size:11px;">Error 404</span>
+    </div>
+
+    <!-- Main Heading -->
+    <h1 class="display-xl" style="font-size:clamp(40px, 8vw, 72px);margin:0 0 var(--spacing-md);letter-spacing:-2px;">
+      Page Not Found
+    </h1>
+
+    <p class="body-lg" style="color:var(--color-body);max-width:520px;margin:0 auto var(--spacing-2xl);">
+      The link you followed may be broken or the page may have been removed. But here is a fresh UUID generated just for you:
+    </p>
+
+    <!-- Easter Egg UUID Display Card -->
+    <div class="feature-card-elevated" style="width:100%;margin-bottom:var(--spacing-2xl);padding:var(--spacing-lg);text-align:left;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--spacing-xs);flex-wrap:wrap;gap:6px;">
+        <span class="mono-eyebrow" style="color:var(--color-mute);">Random UUID v4</span>
+        <span style="font-size:11px;color:var(--color-success);background:rgba(81, 207, 102, 0.1);padding:2px 8px;border-radius:var(--radius-pill);">Client-side generated</span>
+      </div>
+      
+      <div style="display:flex;align-items:center;justify-content:space-between;background:var(--color-canvas);border:1px solid var(--color-hairline);border-radius:var(--radius-sm);padding:10px 14px;gap:8px;overflow-x:auto;">
+        <code id="error-uuid" class="code-text" style="font-size:clamp(13px, 3vw, 16px);color:var(--color-ink);word-break:break-all;">
+          550e8400-e29b-41d4-a716-446655440000
+        </code>
+        <button id="copy-404-btn" class="btn-ghost" style="padding:4px 10px;font-size:12px;" title="Copy UUID">
+          Copy
+        </button>
+      </div>
+    </div>
+
+    <!-- Quick Navigation Actions -->
+    <div style="display:flex;gap:var(--spacing-sm);justify-content:center;flex-wrap:wrap;width:100%;">
+      <a href="/" class="btn-primary" style="padding:10px 20px;font-size:14px;">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M2.5 7.5 8 2.5l5.5 5M4 6.5V13h8V6.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Go to Generator
+      </a>
+      <a href="/validate" class="btn-ghost" style="padding:10px 18px;font-size:14px;">
+        UUID Validator
+      </a>
+      <a href="/bulk" class="btn-ghost" style="padding:10px 18px;font-size:14px;">
+        Bulk Export
+      </a>
+    </div>
+
+  </section>
+
+  <script>
+    // Generate a real client-side UUID v4 on page load
+    function genV4() {
+      const bytes = new Uint8Array(16);
+      crypto.getRandomValues(bytes);
+      bytes[6] = (bytes[6] & 0x0f) | 0x40; // Version 4
+      bytes[8] = (bytes[8] & 0x3f) | 0x80; // Variant RFC 4122
+      const hex = Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
+      return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20, 32)}`;
+    }
+
+    const uuidEl = document.getElementById('error-uuid');
+    const copyBtn = document.getElementById('copy-404-btn');
+    const freshUuid = genV4();
+
+    if (uuidEl) uuidEl.textContent = freshUuid;
+
+    copyBtn?.addEventListener('click', () => {
+      if (uuidEl?.textContent) {
+        navigator.clipboard.writeText(uuidEl.textContent.trim()).then(() => {
+          if (window.showToast) {
+            window.showToast('UUID copied!');
+          }
+        });
+      }
+    });
+  </script>
+</Layout>

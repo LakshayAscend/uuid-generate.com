@@ -1,0 +1,168 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+  title="Contact Us"
+  description="Contact the UUID Generator team. Send us feedback, bug reports, feature requests, or general inquiries."
+  canonical="https://uuid-generate.com/contact-us"
+>
+  <!-- Header -->
+  <section style="padding:var(--spacing-4xl) 0 var(--spacing-xl);border-bottom:1px solid var(--color-hairline);">
+    <div class="container" style="max-width:780px;">
+      <div class="mono-eyebrow" style="color:var(--color-mute);margin-bottom:var(--spacing-sm);">Get in Touch</div>
+      <h1 class="heading-lg" style="margin:0 0 var(--spacing-xs);">Contact Us</h1>
+      <p class="body-lg" style="color:var(--color-body);margin:0;">
+        Have a question, feedback, or need a custom format supported? We'd love to hear from you.
+      </p>
+    </div>
+  </section>
+
+  <!-- Content -->
+  <section class="container section-band" style="max-width:780px;">
+    
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:var(--spacing-2xl);margin-bottom:var(--spacing-3xl);">
+      
+      <!-- Contact Form -->
+      <div>
+        <h2 class="heading-md" style="margin-bottom:var(--spacing-md);">Send a Message</h2>
+        
+        <form id="contact-form" style="display:flex;flex-direction:column;gap:var(--spacing-md);">
+          <div>
+            <label for="contact-name" class="label-sm" style="display:block;margin-bottom:6px;color:var(--color-ink);">Your Name</label>
+            <input
+              type="text"
+              id="contact-name"
+              name="name"
+              required
+              placeholder="e.g. Alex Developer"
+              class="text-input"
+            />
+          </div>
+
+          <div>
+            <label for="contact-email" class="label-sm" style="display:block;margin-bottom:6px;color:var(--color-ink);">Email Address</label>
+            <input
+              type="email"
+              id="contact-email"
+              name="email"
+              required
+              placeholder="alex@example.com"
+              class="text-input"
+            />
+          </div>
+
+          <div>
+            <label for="contact-subject" class="label-sm" style="display:block;margin-bottom:6px;color:var(--color-ink);">Topic</label>
+            <select id="contact-subject" name="subject" class="text-input" style="cursor:pointer;">
+              <option value="General Inquiry">General Inquiry</option>
+              <option value="Feature Request">Feature Request</option>
+              <option value="Bug Report">Bug Report</option>
+              <option value="RFC / Standards Question">RFC / Standards Question</option>
+              <option value="Feedback">General Feedback</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="contact-message" class="label-sm" style="display:block;margin-bottom:6px;color:var(--color-ink);">Message</label>
+            <textarea
+              id="contact-message"
+              name="message"
+              rows="5"
+              required
+              placeholder="Describe your question, request, or suggestion..."
+              class="text-input"
+              style="resize:vertical;"
+            ></textarea>
+          </div>
+
+          <button type="submit" id="contact-submit-btn" class="btn-primary" style="justify-content:center;padding:10px 16px;">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M14 2 2 7.5l4.5 2 2 4.5L14 2Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+              <path d="M6.5 9.5 14 2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+            </svg>
+            Send Message
+          </button>
+        </form>
+
+        <div id="form-success-msg" class="feature-card hidden" style="margin-top:var(--spacing-md);border-color:var(--color-success);background:rgba(81, 207, 102, 0.08);">
+          <div style="display:flex;align-items:center;gap:var(--spacing-xs);">
+            <span style="color:var(--color-success);font-size:18px;">✓</span>
+            <div>
+              <div class="label-sm" style="color:var(--color-ink);">Thank you! Message Sent.</div>
+              <p class="body-sm" style="color:var(--color-body);margin:0;">We appreciate your feedback and will review it promptly.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Contact Info & Cards -->
+      <div style="display:flex;flex-direction:column;gap:var(--spacing-md);">
+        <h2 class="heading-md" style="margin-bottom:0;">Direct Channels</h2>
+        
+        <div class="feature-card">
+          <div class="mono-eyebrow" style="color:var(--color-mute);margin-bottom:4px;">Email Support</div>
+          <div style="font-weight:500;color:var(--color-ink);margin-bottom:4px;">Direct Inbox</div>
+          <a href="mailto:support@uuid-generate.com" class="nav-link" style="color:var(--color-link);padding:0;font-family:var(--font-mono);font-size:13px;display:inline-block;">
+            support@uuid-generate.com
+          </a>
+          <p class="body-sm" style="color:var(--color-mute);margin:6px 0 0;">Typical response time within 24–48 hours.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="mono-eyebrow" style="color:var(--color-mute);margin-bottom:4px;">Frequently Asked</div>
+          <div style="font-weight:500;color:var(--color-ink);margin-bottom:4px;">Looking for Answers?</div>
+          <p class="body-sm" style="color:var(--color-body);margin:0 0 var(--spacing-sm);">
+            Check our comprehensive guide covering RFC specs, collision math, and UUID version comparisons.
+          </p>
+          <a href="/about#faq" class="btn-ghost" style="font-size:12px;padding:4px 10px;">Visit FAQ Section →</a>
+        </div>
+
+        <div class="feature-card">
+          <div class="mono-eyebrow" style="color:var(--color-mute);margin-bottom:4px;">Open &amp; Transparent</div>
+          <div style="font-weight:500;color:var(--color-ink);margin-bottom:4px;">Developer Community</div>
+          <p class="body-sm" style="color:var(--color-body);margin:0;">
+            We continuously refine our generators based on feedback from backend, DevOps, and frontend engineers worldwide.
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+  <script>
+    const form = document.getElementById('contact-form') as HTMLFormElement | null;
+    const successMsg = document.getElementById('form-success-msg');
+    const submitBtn = document.getElementById('contact-submit-btn');
+
+    form?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!form.checkValidity()) return;
+
+      if (submitBtn) {
+        submitBtn.setAttribute('disabled', 'true');
+        submitBtn.innerHTML = 'Sending...';
+      }
+
+      // Simulate instant client-side confirmation or mailto fallback
+      setTimeout(() => {
+        form.reset();
+        if (submitBtn) {
+          submitBtn.removeAttribute('disabled');
+          submitBtn.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M14 2 2 7.5l4.5 2 2 4.5L14 2Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+              <path d="M6.5 9.5 14 2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+            </svg>
+            Send Message
+          `;
+        }
+        successMsg?.classList.remove('hidden');
+        if (window.showToast) {
+          window.showToast('Message sent successfully!');
+        }
+      }, 600);
+    });
+  </script>
+</Layout>

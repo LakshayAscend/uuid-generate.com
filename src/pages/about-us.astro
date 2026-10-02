@@ -1,0 +1,126 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+  title="About Us"
+  description="Learn about UUID Generator — our mission to provide fast, privacy-first, zero-ad developer utilities conforming strictly to RFC 4122 and RFC 9562 standards."
+  canonical="https://uuid-generate.com/about-us"
+>
+  <!-- Header -->
+  <section style="padding:var(--spacing-4xl) 0 var(--spacing-xl);border-bottom:1px solid var(--color-hairline);">
+    <div class="container" style="max-width:780px;">
+      <div class="mono-eyebrow" style="color:var(--color-mute);margin-bottom:var(--spacing-sm);">Our Mission</div>
+      <h1 class="heading-lg" style="margin:0 0 var(--spacing-xs);">About Us</h1>
+      <p class="body-lg" style="color:var(--color-body);margin:0;">
+        Building the fastest, cleanest, and most reliable developer tool suite for Universally Unique Identifiers.
+      </p>
+    </div>
+  </section>
+
+  <!-- Article -->
+  <section class="container section-band" style="max-width:780px;">
+    
+    <!-- Who We Are / Story -->
+    <div style="margin-bottom:var(--spacing-3xl);">
+      <h2 class="heading-md" style="margin-bottom:var(--spacing-md);">Who We Are</h2>
+      <p class="body-lg" style="color:var(--color-body);margin-bottom:var(--spacing-md);">
+        <strong>UUID Generator</strong> was created by engineers who were tired of slow, ad-cluttered, and questionably secure utility websites. Developers need quick access to cryptographic identifiers, batch generation tools, validators, and decoders without popups, paywalls, or privacy risks.
+      </p>
+      <p class="body-md" style="color:var(--color-body);">
+        Our platform is dedicated to providing high-performance, developer-first web tools designed with modern aesthetics, zero latency, and RFC compliance at its foundation.
+      </p>
+    </div>
+
+    <!-- Core Pillars Grid -->
+    <div style="margin-bottom:var(--spacing-3xl);">
+      <h2 class="heading-md" style="margin-bottom:var(--spacing-lg);">Our Core Principles</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:var(--spacing-md);">
+        
+        <div class="feature-card">
+          <div style="font-size:24px;margin-bottom:var(--spacing-xs);">🛡️</div>
+          <h3 class="label-sm" style="font-size:15px;margin-bottom:6px;color:var(--color-ink);">100% Privacy by Design</h3>
+          <p class="body-md" style="color:var(--color-body);margin:0;">
+            All generation algorithms run entirely in your local browser through the Web Crypto API. We never see or store your generated UUIDs.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div style="font-size:24px;margin-bottom:var(--spacing-xs);">⚡</div>
+          <h3 class="label-sm" style="font-size:15px;margin-bottom:6px;color:var(--color-ink);">Instant &amp; Unthrottled</h3>
+          <p class="body-md" style="color:var(--color-body);margin:0;">
+            Generate single UUIDs with keyboard shortcuts or export up to 10,000 UUIDs instantly in TXT, JSON, CSV, and SQL formats without delays.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div style="font-size:24px;margin-bottom:var(--spacing-xs);">📜</div>
+          <h3 class="label-sm" style="font-size:15px;margin-bottom:6px;color:var(--color-ink);">RFC Standards Compliant</h3>
+          <p class="body-md" style="color:var(--color-body);margin:0;">
+            Full adherence to RFC 4122 and the latest RFC 9562 specifications, supporting v1, v3, v4, v5, and the modern time-ordered v7.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div style="font-size:24px;margin-bottom:var(--spacing-xs);">🚫</div>
+          <h3 class="label-sm" style="font-size:15px;margin-bottom:6px;color:var(--color-ink);">No Ads. No Distractions.</h3>
+          <p class="body-md" style="color:var(--color-body);margin:0;">
+            A clean, minimal, keyboard-friendly workspace with dark and light theme support crafted specifically for software developers.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Supported Features -->
+    <div style="margin-bottom:var(--spacing-3xl);">
+      <h2 class="heading-md" style="margin-bottom:var(--spacing-md);">What We Offer</h2>
+      <div style="display:flex;flex-direction:column;gap:var(--spacing-sm);">
+        <div class="feature-card" style="display:flex;align-items:center;justify-content:space-between;gap:var(--spacing-sm);flex-wrap:wrap;">
+          <div>
+            <div class="label-sm" style="color:var(--color-ink);margin-bottom:2px;">Single &amp; Multi-Version Generator</div>
+            <p class="body-md" style="color:var(--color-body);margin:0;">Generate UUID v1, v3, v4, v5, and v7 with custom casing, hyphens, or brackets.</p>
+          </div>
+          <a href="/" class="btn-ghost" style="padding:4px 10px;font-size:13px;">Open Tool →</a>
+        </div>
+
+        <div class="feature-card" style="display:flex;align-items:center;justify-content:space-between;gap:var(--spacing-sm);flex-wrap:wrap;">
+          <div>
+            <div class="label-sm" style="color:var(--color-ink);margin-bottom:2px;">UUID Validator</div>
+            <p class="body-md" style="color:var(--color-body);margin:0;">Check UUID format validity, version numbers, variant types, and RFC compliance.</p>
+          </div>
+          <a href="/validate" class="btn-ghost" style="padding:4px 10px;font-size:13px;">Validate →</a>
+        </div>
+
+        <div class="feature-card" style="display:flex;align-items:center;justify-content:space-between;gap:var(--spacing-sm);flex-wrap:wrap;">
+          <div>
+            <div class="label-sm" style="color:var(--color-ink);margin-bottom:2px;">Bulk Generation &amp; Export</div>
+            <p class="body-md" style="color:var(--color-body);margin:0;">Batch generate up to 10,000 UUIDs formatted for SQL inserts, JSON arrays, and CSV.</p>
+          </div>
+          <a href="/bulk" class="btn-ghost" style="padding:4px 10px;font-size:13px;">Bulk Tool →</a>
+        </div>
+
+        <div class="feature-card" style="display:flex;align-items:center;justify-content:space-between;gap:var(--spacing-sm);flex-wrap:wrap;">
+          <div>
+            <div class="label-sm" style="color:var(--color-ink);margin-bottom:2px;">UUID Decoder &amp; Timestamp Parser</div>
+            <p class="body-md" style="color:var(--color-body);margin:0;">Extract exact timestamps, clock sequences, and bit layouts from v1, v6, and v7 UUIDs.</p>
+          </div>
+          <a href="/decode" class="btn-ghost" style="padding:4px 10px;font-size:13px;">Decode →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Get in touch -->
+    <div class="feature-card" style="background:var(--color-canvas-elevated);border-color:var(--color-hairline);">
+      <h2 class="heading-md" style="margin-bottom:var(--spacing-xs);">Get in Touch</h2>
+      <p class="body-md" style="color:var(--color-body);margin-bottom:var(--spacing-md);">
+        Have ideas for improvement, found a bug, or want a specific output format added? We would love to hear from you.
+      </p>
+      <div style="display:flex;gap:var(--spacing-sm);flex-wrap:wrap;">
+        <a href="/contact-us" class="btn-primary">Contact Us</a>
+        <a href="/about" class="btn-ghost">UUID Reference Guide</a>
+      </div>
+    </div>
+
+  </section>
+</Layout>

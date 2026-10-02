@@ -1,0 +1,122 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+  title="Privacy Policy"
+  description="Read our Privacy Policy. UUID Generator is 100% client-side, zero-tracking, and privacy-first. No generated UUIDs or personal data are ever stored or transmitted to our servers."
+  canonical="https://uuid-generate.com/privacy-policy"
+>
+  <!-- Header -->
+  <section style="padding:var(--spacing-4xl) 0 var(--spacing-xl);border-bottom:1px solid var(--color-hairline);">
+    <div class="container" style="max-width:780px;">
+      <div class="mono-eyebrow" style="color:var(--color-mute);margin-bottom:var(--spacing-sm);">Legal & Transparency</div>
+      <h1 class="heading-lg" style="margin:0 0 var(--spacing-xs);">Privacy Policy</h1>
+      <p class="body-lg" style="color:var(--color-body);margin:0;">Last updated: October 2025. Clear, straightforward, and zero-tracking.</p>
+    </div>
+  </section>
+
+  <!-- Article -->
+  <section class="container section-band" style="max-width:780px;">
+    
+    <!-- Summary Banner -->
+    <div class="feature-card" style="margin-bottom:var(--spacing-3xl);border-color:var(--color-ink);background:var(--color-canvas-elevated);">
+      <div style="display:flex;align-items:flex-start;gap:var(--spacing-sm);">
+        <div style="font-size:20px;line-height:1;">🔒</div>
+        <div>
+          <h2 class="label-sm" style="font-size:16px;margin:0 0 6px;color:var(--color-ink);">The Short Version (Our Core Privacy Guarantee)</h2>
+          <p class="body-md" style="color:var(--color-body);margin:0;">
+            All UUIDs generated, validated, decoded, or bulk-exported on this website are processed <strong>100% client-side in your browser</strong> using the standard Web Crypto API. We do not store, log, inspect, transmit, or monetize your generated identifiers or input data.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1. Zero-Knowledge Architecture -->
+    <div style="margin-bottom:var(--spacing-3xl);">
+      <h2 class="heading-md" id="client-side" style="margin-bottom:var(--spacing-md);">1. Client-Side Processing Architecture</h2>
+      <p class="body-md" style="color:var(--color-body);margin-bottom:var(--spacing-md);">
+        Unlike traditional online tools that process requests on remote backend servers, <strong>uuid-generate.com</strong> executes all generation algorithms directly within your local web browser:
+      </p>
+      <ul style="color:var(--color-body);font-size:14px;line-height:1.7;margin-bottom:var(--spacing-md);padding-left:20px;">
+        <li><strong>Random UUIDs (v4):</strong> Generated using your operating system's Cryptographically Secure Pseudorandom Number Generator (CSPRNG) via <code class="code-text">window.crypto.getRandomValues()</code>.</li>
+        <li><strong>Time-based UUIDs (v1, v7):</strong> Assembled locally using your system clock and in-memory cryptographic random bits.</li>
+        <li><strong>Namespace UUIDs (v3, v5):</strong> Computed entirely in browser memory using standard SHA-1 and MD5 hashing implementations.</li>
+        <li><strong>Bulk Export & Decoding:</strong> Processed in your browser memory and downloaded directly as client-side Blob objects.</li>
+      </ul>
+      <p class="body-md" style="color:var(--color-body);">
+        Because no data packets containing your UUIDs are sent to our servers, it is architecturally impossible for us or any third party to intercept your generated keys.
+      </p>
+    </div>
+
+    <!-- 2. Data We Do NOT Collect -->
+    <div style="margin-bottom:var(--spacing-3xl);">
+      <h2 class="heading-md" id="no-collection" style="margin-bottom:var(--spacing-md);">2. Information We Do Not Collect</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--spacing-md);">
+        <div class="feature-card">
+          <div class="mono-eyebrow" style="color:var(--color-mute);margin-bottom:6px;">No Accounts</div>
+          <p class="body-md" style="color:var(--color-body);margin:0;">No registration, email addresses, usernames, or passwords required.</p>
+        </div>
+        <div class="feature-card">
+          <div class="mono-eyebrow" style="color:var(--color-mute);margin-bottom:6px;">No Identifier Storage</div>
+          <p class="body-md" style="color:var(--color-body);margin:0;">We never log or save the UUIDs you create or the inputs you provide for validation.</p>
+        </div>
+        <div class="feature-card">
+          <div class="mono-eyebrow" style="color:var(--color-mute);margin-bottom:6px;">No Advertising Trackers</div>
+          <p class="body-md" style="color:var(--color-body);margin:0;">We do not use advertising networks, cross-site tracking pixels, or data broker integrations.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Local Storage Usage -->
+    <div style="margin-bottom:var(--spacing-3xl);">
+      <h2 class="heading-md" id="local-storage" style="margin-bottom:var(--spacing-md);">3. Cookies & Local Storage</h2>
+      <p class="body-md" style="color:var(--color-body);margin-bottom:var(--spacing-sm);">
+        We do not use tracking cookies. We only use browser <code class="code-text">localStorage</code> for purely functional preferences:
+      </p>
+      <ul style="color:var(--color-body);font-size:14px;line-height:1.7;margin-bottom:var(--spacing-sm);padding-left:20px;">
+        <li><code class="code-text">theme</code>: Stores your visual theme selection (<code class="code-text">"dark"</code> or <code class="code-text">"light"</code>) so the interface remains consistent across visits.</li>
+      </ul>
+      <p class="body-md" style="color:var(--color-body);">
+        You can clear your local storage at any time through your browser developer tools or settings without affecting tool functionality.
+      </p>
+    </div>
+
+    <!-- 4. Third-Party Hosting & CDN -->
+    <div style="margin-bottom:var(--spacing-3xl);">
+      <h2 class="heading-md" id="infrastructure" style="margin-bottom:var(--spacing-md);">4. Hosting and Infrastructure</h2>
+      <p class="body-md" style="color:var(--color-body);margin-bottom:var(--spacing-sm);">
+        Our static assets and HTML pages are delivered via secure Content Delivery Networks (CDNs) and cloud hosting. Like all web servers, standard non-identifiable technical server logs (such as HTTP request headers, IP address, and browser user-agent) may be temporarily processed by infrastructure providers solely for DDoS mitigation, performance optimization, and server uptime monitoring.
+      </p>
+    </div>
+
+    <!-- 5. Children's Privacy -->
+    <div style="margin-bottom:var(--spacing-3xl);">
+      <h2 class="heading-md" id="children" style="margin-bottom:var(--spacing-md);">5. Children's Privacy</h2>
+      <p class="body-md" style="color:var(--color-body);">
+        Our service is a general-purpose technical developer utility. We do not knowingly collect or solicit personal information from children under the age of 13.
+      </p>
+    </div>
+
+    <!-- 6. Changes to this Policy -->
+    <div style="margin-bottom:var(--spacing-3xl);">
+      <h2 class="heading-md" id="changes" style="margin-bottom:var(--spacing-md);">6. Changes to This Privacy Policy</h2>
+      <p class="body-md" style="color:var(--color-body);">
+        We may occasionally update this Privacy Policy to reflect technical enhancements or regulatory requirements. Any modifications will be posted directly to this page with an updated "Last updated" date.
+      </p>
+    </div>
+
+    <!-- 7. Contact Us -->
+    <div id="contact-info">
+      <h2 class="heading-md" style="margin-bottom:var(--spacing-md);">7. Contact Us</h2>
+      <p class="body-md" style="color:var(--color-body);margin-bottom:var(--spacing-md);">
+        If you have any questions, concerns, or feedback regarding this Privacy Policy, please reach out through our <a href="/contact-us" class="nav-link" style="color:var(--color-link);display:inline;padding:0;">Contact Us page</a>.
+      </p>
+      <div class="feature-card" style="display:inline-flex;align-items:center;gap:var(--spacing-sm);padding:10px 16px;">
+        <span style="color:var(--color-mute);font-size:13px;">Direct inquiry:</span>
+        <a href="mailto:support@uuid-generate.com" class="nav-link" style="color:var(--color-link);padding:0;font-size:13px;font-family:var(--font-mono);">support@uuid-generate.com</a>
+      </div>
+    </div>
+
+  </section>
+</Layout>
