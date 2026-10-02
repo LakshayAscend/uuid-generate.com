@@ -1,11 +1,4 @@
 User-agent: *
 Allow: /
 
-# Disallow error pages
-Disallow: /404
-Disallow: /500
-
-# Host & Sitemap
-Host: https://uuid-generate.com
 Sitemap: https://uuid-generate.com/sitemap-index.xml
-Sitemap: https://uuid-generate.com/sitemap.xml
